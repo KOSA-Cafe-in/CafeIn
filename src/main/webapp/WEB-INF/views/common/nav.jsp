@@ -8,19 +8,19 @@
         <span class="ico">🏠</span>홈
       </a>
     </li>
+    <li class="${param.active == 'board' ? 'active' : ''}">
+      <a href="${pageContext.request.contextPath}/board" style="color: inherit; text-decoration: none;">
+        <span class="ico">🔔</span>게시판
+      </a>
+    </li>
     <li class="${param.active == 'order' ? 'active' : ''}">
       <a href="${pageContext.request.contextPath}/order" style="color: inherit; text-decoration: none;">
         <span class="ico">🧾</span>주문
       </a>
     </li>
-    <li class="${param.active == 'notification' ? 'active' : ''}">
-      <a href="${pageContext.request.contextPath}/notification" style="color: inherit; text-decoration: none;">
-        <span class="ico">🔔</span>알림
-      </a>
-    </li>
-    <li class="${param.active == 'setting' ? 'active' : ''}">
-      <a href="${pageContext.request.contextPath}/setting" style="color: inherit; text-decoration: none;">
-        <span class="ico">⚙️</span>설정
+    <li class="${param.active == 'mypage' ? 'active' : ''}">
+      <a href="${pageContext.request.contextPath}/mypage" style="color: inherit; text-decoration: none;">
+        <span class="ico">⚙️</span>마이페이지
       </a>
     </li>
   </ul>

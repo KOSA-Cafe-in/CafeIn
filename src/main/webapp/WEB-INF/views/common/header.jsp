@@ -16,8 +16,5 @@
     <c:if test="${param.showOrderHistory != 'false'}">
       <a href="${pageContext.request.contextPath}/order/history">주문내역</a>
     </c:if>
-    <c:if test="${param.rightLink != null}">
-      <a href="${param.rightLinkUrl}">${param.rightLink}</a>
-    </c:if>
   </div>
 </header>
