@@ -1,6 +1,8 @@
 package com.cafein.domain.user;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -9,6 +11,7 @@ public class UserDTO {
     private Long cafeId;
     private String nickname;
     private String email;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private Date createdDate;
+    private Date modifiedDate;
+    private List<AuthVO> authList;
 }

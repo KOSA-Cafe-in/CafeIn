@@ -1,6 +1,6 @@
 package com.cafein.domain.menu;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -10,6 +10,6 @@ public class MenuDTO {
     private String content;
     private Long price;
     private String menuPictureUrl; // CLOB → String
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private Date createdDate;
+    private Date modifiedDate;
 }
