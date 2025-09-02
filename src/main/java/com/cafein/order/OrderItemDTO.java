@@ -1,4 +1,4 @@
-package com.cafein.domain.order;
+package com.cafein.order;
 
 import lombok.Data;
 

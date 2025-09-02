@@ -1,4 +1,4 @@
-package com.cafein.domain.board;
+package com.cafein.board;
 
 import java.util.Date;
 import lombok.Data;

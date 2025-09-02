@@ -1,4 +1,4 @@
-package com.cafein.domain.user;
+package com.cafein.user;
 
 import java.util.Date;
 import java.util.List;
