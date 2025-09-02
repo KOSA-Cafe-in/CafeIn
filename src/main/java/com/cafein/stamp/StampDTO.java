@@ -1,4 +1,4 @@
-package com.cafein.domain.stamp;
+package com.cafein.stamp;
 
 import lombok.Data;
 

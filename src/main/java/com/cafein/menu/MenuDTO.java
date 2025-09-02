@@ -1,4 +1,4 @@
-package com.cafein.domain.menu;
+package com.cafein.menu;
 
 import java.util.Date;
 import lombok.Data;

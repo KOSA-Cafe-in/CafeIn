@@ -1,8 +1,4 @@
-package com.cafein.mapper;
-
-
-import com.cafein.domain.user.UserDTO;
-
+package com.cafein.user;
 
 public interface UserMapper {
 	

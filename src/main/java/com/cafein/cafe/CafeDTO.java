@@ -1,4 +1,4 @@
-package com.cafein.domain.cafe;
+package com.cafein.cafe;
 
 import lombok.Data;
 

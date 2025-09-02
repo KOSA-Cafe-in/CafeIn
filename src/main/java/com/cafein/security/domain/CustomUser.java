@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import com.cafein.domain.user.UserDTO;
+
+import com.cafein.user.UserDTO;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
