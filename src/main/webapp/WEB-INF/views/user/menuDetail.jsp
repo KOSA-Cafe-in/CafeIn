@@ -6,12 +6,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>토스 카페 - ${menu.menuName}</title>
+
+
+  <title>토스 카페 - ${menu.name}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <%@ include file="/WEB-INF/views/common/head.jsp" %>
 
   <style>
-    /* 페이지 전용 스타일 (공통 head.css와 충돌 없게 접두어 사용) */
+    /* 페이지 전용 스타일 */
     :root{
       --tc-primary:#2f76ff;
       --tc-text:#111827;
@@ -39,67 +41,63 @@
   <div class="md-phone">
     <div style="position:relative">
       <div class="md-hero">
-        <!-- 이미지 플레이스홀더 -->
-        이미지 준비중
+        <c:choose>
+          <c:when test="${not empty menu.menuPictureUrl}">
+            <img src="${menu.menuPictureUrl}" alt="${menu.name}" style="width:100%;height:100%;object-fit:cover;" />
+          </c:when>
+          <c:otherwise>
+            이미지 준비중
+          </c:otherwise>
+        </c:choose>
       </div>
       <button class="md-back" onclick="history.back()">←</button>
     </div>
 
     <div class="md-content">
-      <span class="md-category">${menu.category}</span>
-      <h1 class="md-title">${menu.menuName}</h1>
-      <p class="md-desc">${menu.description}</p>
+      <span class="md-category">메뉴</span>
+      <h1 class="md-title">${menu.name}</h1>
+      <p class="md-desc">${menu.content}</p>
 
       <div class="md-row">
-        <div class="md-price">
-          <fmt:formatNumber value="${menu.price}" pattern="#,###"/>원
-        </div>
+        <span class="md-price"><fmt:formatNumber value="${menu.price}" type="number" pattern="#,###" />원</span>
         <div class="md-stepper">
-          <button type="button" onclick="decrease()">-</button>
+          <button type="button" onclick="changeQuantity(-1)">−</button>
           <span class="count" id="quantity">1</span>
-          <button type="button" onclick="increase()">+</button>
+          <button type="button" onclick="changeQuantity(1)">+</button>
         </div>
       </div>
     </div>
 
     <div class="md-cta">
       <button class="btn" onclick="addToCart()">
-        <span id="cartText">장바구니 담기</span>
-        <span id="totalPrice">
-          <fmt:formatNumber value="${menu.price}" pattern="#,###"/>원
-        </span>
+        <span id="totalPrice"><fmt:formatNumber value="${menu.price}" type="number" pattern="#,###" />원</span>
+        담기
       </button>
     </div>
   </div>
 
   <script>
     let quantity = 1;
-    const basePrice = ${menu.price};
+    const menuPrice = ${menu.price};
 
-    function increase() {
-      if (quantity < 99) {
-        quantity++;
-        updateDisplay();
+    function changeQuantity(delta) {
+      const newQuantity = quantity + delta;
+      if (newQuantity >= 1 && newQuantity <= 99) {
+        quantity = newQuantity;
+        document.getElementById('quantity').textContent = quantity;
+        updateTotalPrice();
       }
     }
 
-    function decrease() {
-      if (quantity > 1) {
-        quantity--;
-        updateDisplay();
-      }
-    }
-
-    function updateDisplay() {
-      document.getElementById('quantity').textContent = quantity;
-      const totalPrice = basePrice * quantity;
+    function updateTotalPrice() {
+      const totalPrice = menuPrice * quantity;
       document.getElementById('totalPrice').textContent =
-        totalPrice.toLocaleString() + '원';
+        new Intl.NumberFormat('ko-KR').format(totalPrice) + '원';
     }
 
     function addToCart() {
-      alert('장바구니에 ' + quantity + '개가 추가되었습니다!');
-      // 실제 구현시에는 서버로 데이터를 전송하는 로직 추가
+      alert(`${quantity}개가 장바구니에 담겼습니다.`);
+      // 여기에 실제 장바구니 추가 로직 구현
     }
   </script>
 </body>

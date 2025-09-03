@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import com.cafein.domain.user.UserDTO;
-import com.cafein.mapper.UserMapper;
+
 import com.cafein.security.domain.CustomUser;
+import com.cafein.user.UserDTO;
+import com.cafein.user.UserMapper;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
