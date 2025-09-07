@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:security="http://www.springframework.org/schema/security"
-xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-<bean id="customAccessDenied" 	class="com.cafein.security.CustomAccessDeniedHandler">
-</bean>
-
-<bean id="customLoginSuccess" 	class="com.cafein.security.CustomLoginSuccessHandler" >
-</bean>
-
-<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-
-<bean id="customUserDetailsService" class="com.cafein.security.CustomUserDetailsService">
-</bean>
-		
-<security:http>
-<!-- <security:form-login login-page="/customLogin"  -->
-<!-- authentication-success-handler-ref="customLoginSuccess"  />   -->
-<security:form-login login-page="/customLogin" />
-<security:intercept-url pattern="/sample/all" 	access="permitAll" />
-<security:intercept-url	pattern="/sample/member" access="hasRole('ROLE_MEMBER')" />	
-<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')" />			
-<security:access-denied-handler ref="customAccessDenied" />	
- 		 
-
-<security:remember-me	data-source-ref="dataSource" token-validity-seconds="604800" />			
-<security:logout logout-url="/customLogout"
-			invalidate-session="true" delete-cookies="remember-me,JSESSION_ID" />
-</security:http>
-
-<security:authentication-manager>
-	<security:authentication-provider user-service-ref="customUserDetailsService" >
-	<security:password-encoder 	ref="bcryptPasswordEncoder" />
+	<!-- Component Scan 추가 - 이게 핵심! -->
+    <context:component-scan base-package="com.cafein" />   
 	
-	</security:authentication-provider>
-</security:authentication-manager>
+    <!-- application.properties 로딩 -->
+	<context:property-placeholder location="classpath:application.properties"/>
+	
+	<!-- 카카오 OAuth2 서비스 Bean -->
+    <bean id="kakaoOAuth2Service" class="com.cafein.security.KakaoOAuth2Service" />
+
+	<security:http>
+		<!-- 로그인 페이지와 카카오 관련 URL 허용 -->
+	    <security:intercept-url pattern="/login" access="permitAll" />
+	    <security:intercept-url pattern="/kakao/**" access="permitAll" />
+    	<security:intercept-url pattern="/resources/**" access="permitAll" />    
+		
+		<!-- 권한이 필요한 페이지 -->
+		<security:intercept-url pattern="/user/**"	access="hasRole('ROLE_CUSTOMER')" />
+		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_MANAGER')" />
+		
+		<!-- API 허용 -->
+		<security:intercept-url pattern="/api/auth/**" access="permitAll" />
+		
+		<!-- 기본 로그인 폼 비활성화 (카카오만 사용) -->
+		<security:form-login login-page="/login" />
+		<security:logout logout-url="/Logout"	invalidate-session="true" delete-cookies="remember-me,JSESSION_ID" />
+	</security:http>
+	
+	<!-- 어노테이션 기반 보안 활성화 -->
+	<security:global-method-security pre-post-annotations="enabled" />
 
 
 </beans>

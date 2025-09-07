@@ -50,3 +50,6 @@ bin/
 # ======================
 .DS_Store
 Thumbs.db
+
+# 환경 설정 변수 파일 제외
+src/main/resources/application.properties
