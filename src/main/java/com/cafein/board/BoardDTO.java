@@ -1,6 +1,7 @@
 package com.cafein.board;
 
-import java.util.Date;
+import java.sql.Date;
+
 import lombok.Data;
 
 @Data
