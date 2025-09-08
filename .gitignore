@@ -50,3 +50,4 @@ bin/
 # ======================
 .DS_Store
 Thumbs.db
+src\main\resources\s3.properties
