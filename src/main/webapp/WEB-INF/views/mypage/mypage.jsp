@@ -100,9 +100,9 @@
 	  </section>
 
 	  <!-- 저장 버튼 -->
-	  <div class="cta">
-	    <button class="btn">로그아웃</button>
-	  </div>
+	  <form action="/logout" method="get" class="cta">
+	    <button type="submit" class="btn">로그아웃</button>
+	  </form>
 
     </main>
     

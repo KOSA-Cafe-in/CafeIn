@@ -31,10 +31,11 @@ public class MypageController {
     @GetMapping("/mypage")
     public String mypage(HttpSession session, Model model) {
     	// 세션에서 현재 로그인 사용자 정보 가져오기
-    	Long userCafeId = (Long) session.getAttribute("currentUserCafeId");
-    	
+    	Long userCafeId = (Long) session.getAttribute("userCafeId");
+    	Long cafeId = (Long) session.getAttribute("cafeId");
+
     	if(userCafeId == null) {
-    		return "redirect:/login"; // 로그인 안됨
+    		return "redirect:/login?cafeId=" + cafeId; // 로그인 안됨
     	}
     	    	
     	// userCafeId로 사용자 정보 조회
@@ -53,10 +54,11 @@ public class MypageController {
     @GetMapping("/mypage/edit")
     public String mypageEdit(HttpSession session, Model model) {
     	// 세션에서 현재 로그인 사용자 정보 가져오기
-    	Long userCafeId = (Long) session.getAttribute("currentUserCafeId");
-    	
+    	Long userCafeId = (Long) session.getAttribute("userCafeId");
+    	Long cafeId = (Long) session.getAttribute("cafeId");
+
     	if(userCafeId == null) {
-    		return "redirect:/login"; // 로그인 안됨
+    		return "redirect:/login?cafeId=" + cafeId; // 로그인 안됨
     	}
     	
     	// userCafeId로 사용자 정보 조회
@@ -71,9 +73,11 @@ public class MypageController {
     @PostMapping("/mypage/updateNickname")
     public String updateNickname(HttpSession session, @RequestParam("nickname") String nickname) {
     	// 세션에서 현재 사용자 확인
-    	Long userCafeId = (Long) session.getAttribute("currentUserCafeId");
+    	Long userCafeId = (Long) session.getAttribute("userCafeId");
+		Long cafeId = (Long) session.getAttribute("cafeId");
+
     	if(userCafeId == null) {
-    		return "redirect:/login";
+    		return "redirect:/login?cafeId=" + cafeId; // 로그인 안됨
     	}
     	
     	// 사용자 정보 업데이트

@@ -3,8 +3,6 @@ package com.cafein.login;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.cafein.security.JwtUtil;
 import com.cafein.security.KakaoOAuth2Service;
 import com.cafein.user.UserDTO;
 import com.cafein.user.UserService;
@@ -36,9 +33,6 @@ public class KakaoLoginController {
 	
 	@Autowired
 	private KakaoOAuth2Service kakaoOAuth2Service;
-	
-	@Autowired
-	private JwtUtil jwtUtil;
     
 	// 카카오 로그인 시작
 	@GetMapping("/login")
@@ -49,7 +43,7 @@ public class KakaoLoginController {
 	}
 	
 	@GetMapping("/callback")
-	public String kakaoCallback(@RequestParam("code") String code, @RequestParam("state") Long cafeId, HttpSession session, HttpServletResponse response) {
+	public String kakaoCallback(@RequestParam("code") String code, @RequestParam("state") Long cafeId, HttpSession session) {
 		System.out.println("인증코드 받음: " + code + "/ 카페 ID : " + cafeId);
 		
 		try {
@@ -77,41 +71,22 @@ public class KakaoLoginController {
 	        // role에 따른 redirect 처리
 	        UserCafeDTO userCafe = userCafeService.findUserCafeByUserAndCafe(user.getUserId(), cafeId);
 	        
-	        // 세션에 userCafeId 저장
-	        session.setAttribute("currentUserCafeId", userCafe.getUserCafeId());
-
-	        // Access Token 생성 (짧은 만료시간)
-	        String accessToken = jwtUtil.generateAccessToken(user.getUserId(), user.getNickname());
-	        
-	        // Refresh Token 생성 (긴 만료시간)
-	        String refreshToken = jwtUtil.generateRefreshToken(user.getUserId());
-	        
-	        // Access Token은 일반 쿠키로 (JavaScript 접근 가능)
-	        Cookie accessCookie = new Cookie("accessToken", accessToken);
-	        accessCookie.setHttpOnly(false);
-	        accessCookie.setPath("/");
-	        accessCookie.setMaxAge(60 * 60); // 1시간
-	        response.addCookie(accessCookie);
-	        
-	        // Refresh Token은 HttpOnly 쿠키로 (더 안전)
-	        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-	        refreshCookie.setHttpOnly(true); // JavaScript 접근 불가
-	        refreshCookie.setPath("/");
-	        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7일
-	        response.addCookie(refreshCookie);
-	        
-	        System.out.println("JWT 토큰 생성 완료:" + accessCookie + "/" + refreshCookie);
-	        
-	        // Spring Security 인증 객체 생성
-	        String role = "ROLE_" + userCafe.getRole();	// ROLE_MANAGER 또는 ROLE_CUSTOMER
-	        Authentication auth = new UsernamePasswordAuthenticationToken(
-	        		userCafe.getUserCafeId().toString(),
-	        		null,
-	        		Arrays.asList(new SimpleGrantedAuthority(role))
-	        );
-	        
-	        // Spring security 컨텍스트에 인증 정보 저장
-	        SecurityContextHolder.getContext().setAuthentication(auth);
+	        // 세션에 필요한 정보만 저장
+			session.setAttribute("userId", user.getUserId());
+			session.setAttribute("userCafeId", userCafe.getUserCafeId());
+			session.setAttribute("nickname", user.getNickname());
+			session.setAttribute("role", userCafe.getRole());           // "MANAGER" - 비즈니스 로직용
+			session.setAttribute("cafeId", cafeId);
+			
+			// Spring Security 컨텍스트에 권한 설정
+			String role = "ROLE_" + userCafe.getRole();
+			Authentication auth = new UsernamePasswordAuthenticationToken(
+			    userCafe.getUserCafeId().toString(),
+			    null,
+			    Arrays.asList(new SimpleGrantedAuthority(role))
+			);
+			SecurityContextHolder.getContext().setAuthentication(auth);
+			System.out.println("Spring Security 권한 설정 완료: " + role);
 	        
 	        // 로그인 처리 후 점장이면 ADMIN 페이지로 이동
 	        if(userCafe.getRole().equals("MANAGER")) {
