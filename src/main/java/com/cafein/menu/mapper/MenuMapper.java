@@ -10,6 +10,6 @@ import java.util.List;
 public interface MenuMapper {
 
     List<MenuDTO> findAll();
-
+    
     MenuDTO findById(Long menuId);
 }

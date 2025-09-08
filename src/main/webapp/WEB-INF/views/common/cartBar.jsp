@@ -60,18 +60,20 @@
 	transition: .25s;
 }
 </style>
-<!-- cart-bar.jsp 안의 버튼 마크업에 금액 자리(id=cartBarAmount)가 있어야 해요 -->
 <div class="cartbar-wrap">
-  <div id="cartBar" class="cartbar hidden">
-    <button class="cartbar-btn" type="button" onclick="location.href='<c:url value="/cart"/>'">
-      <span class="cartbar-badge" id="cartBarCount">0</span>
-      <span id="cartBarAmount"></span>  
-      <span>장바구니 보기</span>
-    </button>
-  </div>
+	<div id="cartBar" class="cartbar hidden">
+		<button class="cartbar-btn" type="button" onclick="goToCart()">
+			<span class="cartbar-badge" id="cartBarCount">0</span> <span
+				id="cartBarAmount"></span> <span>장바구니 보기</span>
+		</button>
+	</div>
 </div>
 
 <script>
+function goToCart() {
+    window.location.href = '<c:url value="/user/cart"/>';
+}
+
   function updateCartBar(){
     const s = cartSummary(); // {count, amount, amountText}
     console.log(s);

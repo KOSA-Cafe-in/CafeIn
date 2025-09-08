@@ -174,6 +174,10 @@
 	color: #fff !important;
 }
 
+#addBtn {
+	display: none; /* 처음에는 숨김 */
+}
+
 .btn-primary:disabled {
 	opacity: .5;
 	cursor: not-allowed;
@@ -207,7 +211,7 @@
 						value="${menu.price}" type="number" pattern="#,###" />원</span>
 				<div class="md-stepper">
 					<button type="button" onclick="changeQuantity(-1)">−</button>
-					<span class="count" id="quantity">1</span>
+					<span class="count" id="quantity">0</span>
 					<button type="button" onclick="changeQuantity(1)">+</button>
 				</div>
 			</div>
@@ -215,28 +219,49 @@
 		<div class="buttons">
 			<button type="button" class="btn btn-primary" id="addBtn"
 				onclick="addCurrent()">
-				<span class="badge" id="cartBadge">0</span>
-				<span id="totalPrice"></span>
+				<span class="badge" id="cartBadge">0</span> <span id="totalPrice"></span>
 			</button>
 		</div>
 	</div>
 
 	<script>
-	function updateBar(){
-	    const s = cartSummary(); // {count, amount, amountText}
-	    console.log(s);
-	    console.log(s.amountText);
-	    
-	    if (s.count > 0) {
-	      document.getElementById('cartBadge').textContent = s.count;
-	      console.log(s.amount);
-	      const total = s.amount.toLocaleString();
-	      console.log(total);
-	      document.getElementById('totalPrice').textContent = total + '원 담기'; // ★ 합계 표시
-	    } 
+	  function changeQuantity(delta){
+		const qtyEl = document.getElementById('quantity');
+		const page = document.getElementById('page');
+		const unit  = Number(page?.dataset?.menuPrice) || 0;
+	    let qty = parseInt(qtyEl.textContent, 10) || 0;
+	    qty = Math.max(0, Math.min(99, qty + delta));
+	    qtyEl.textContent = qty;
+	    const total = unit*(qty);
+	    document.getElementById('cartBadge').textContent =  qty;
+	    document.getElementById('totalPrice').textContent =  total + '원 담기';
+
+	    // 스테퍼 버튼 enable/disable
+	    const stepper = qtyEl.closest('.md-stepper');
+	    if (stepper) {
+	      const buttons = stepper.querySelectorAll('button');
+	      const minus = buttons[0], plus = buttons[1] || buttons[2]; // 구조 보호
+	      if (minus) minus.disabled = (qty <= 0);
+	      if (plus)  plus.disabled  = (qty >= 99);
+	    }
+	    const addBtn = document.getElementById('addBtn');
+	    if(qty != 0) addBtn.style.display = 'flex'; // 원래 flex 레이아웃이니까
+	    else addBtn.style.display = 'none';
 	  }
-	  document.addEventListener('DOMContentLoaded', updateBar);
-	  window.addEventListener('storage', (e)=>{ if(e.key==='cart:updated') updateBar(); });
+
+	  function addCurrent(){
+		  const page = document.getElementById('page');
+		  const menuId = page?.dataset?.menuId;
+		  const name   = page?.dataset?.menuName;
+		  const price  = Number(page?.dataset?.menuPrice) || 0;
+		  const qty    = parseInt(document.getElementById('quantity').textContent, 10) || 1;
+
+		  if (typeof cartAdd === 'function') {
+		    cartAdd({ menuId, name, price, qty });
+		  }
+		  // 담기 후 user/home으로 이동
+		  window.location.href = '/user/home';
+		}
 	
 	</script>
 </body>

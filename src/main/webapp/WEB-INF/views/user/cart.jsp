@@ -46,61 +46,38 @@
     .coupon-pill{display:flex;align-items:center;justify-content:space-between;background:var(--pill);border-radius:24px;padding:14px 16px;font-weight:700;cursor:pointer}
     .coupon-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;background:#fff;font-size:16px}
     .coupon-pill.active .coupon-check{border-color:#10b981;box-shadow:inset 0 0 0 1000px #10b981;color:#fff}
-    .buttons{position:sticky;bottom:0;background:linear-gradient(180deg, rgba(246,247,251,0) 0%, var(--bg) 40%, var(--bg) 100%);padding:14px 12px 12px}
+    .buttons{position:sticky;bottom:60px; z-index:30; background:linear-gradient(180deg, rgba(246,247,251,0) 0%, var(--bg) 40%, var(--bg) 100%);padding:14px 12px 12px}
     .btn{width:100%;height:48px;border-radius:14px;border:0;cursor:pointer;font-size:16px;font-weight:700}
     .btn-outline{background:#e9eefb;color:#274472;margin-bottom:10px}
     .btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--primary);color:#fff}
     .btn-primary:active{background:var(--primary-pressed)}
     .badge{min-width:28px;height:28px;border-radius:999px;background:#fff;color:#2563eb;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
-    .nav{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0}
-    .nav .dot{width:24px;height:24px;border-radius:8px;background:#e5e7eb}
     @media (min-width:421px){ .phone{border-left:1px solid var(--line);border-right:1px solid var(--line)} }
   </style>
 </head>
 <body>
 <div class="phone">
-  <!-- 헤더 -->
-  <header class="header">
-    <div class="back" onclick="history.back()">‹</div>
-    <div class="title">장바구니</div>
-  </header>
+<!-- 헤더 include -->
+        <jsp:include page="/WEB-INF/views/common/header.jsp">
+            <jsp:param name="title" value="장바구니" />
+            <jsp:param name="showOrderHistory" value="true" />
+        </jsp:include>
+
 
   <!-- 본문 -->
   <main class="content">
-    <!-- 장바구니 아이템: 서버에서 menuId로 menufindID 쿼리로 조회한 결과를 cartItems로 전달 -->
-    <!-- cartItems: List<CartItemDTO> (menuId, name, price, quantity, content 등) -->
-    <section class="cart" id="cart">
-      <c:forEach var="item" items="${cartItems}">
-        <article class="item" data-price="${item.price}" data-menu-id="${item.menuId}">
-          <div class="item-left">
-            <div class="name">${item.name}</div>
-            <c:if test="${not empty item.content}">
-              <div class="desc">${item.content}</div>
-            </c:if>
-            <div class="price">
-              <fmt:formatNumber value="${item.price}" type="number" />원
-            </div>
-          </div>
-          <div class="qty">
-            <button class="btn-qty" onclick="updateQty('${item.menuId}','DEC')">−</button>
-            <div class="count">${item.quantity}</div>
-            <button class="btn-qty" onclick="updateQty('${item.menuId}','INC')">+</button>
-            <button class="remove" aria-label="삭제" onclick="removeItem('${item.menuId}')">✕</button>
-          </div>
-        </article>
-      </c:forEach>
-    </section>
+    <section class="cart" id="cart"></section>
 
-    <a class="addmore" href="<c:url value='/menu/list'/>">메뉴 더 추가 +</a>
+    <a class="addmore" href="<c:url value='/user/home'/>">메뉴 더 추가 +</a>
 
     <!-- 주문 유형: '픽업' 대신 '포장'으로 표시 -->
     <section class="option-group" id="orderType">
       <label class="option ${orderType eq 'TAKEOUT' ? 'active' : ''}" data-type="TAKEOUT">
-        <div><span class="opt-title">포장</span><span class="opt-sub">12~14분</span></div>
+        <div><span class="opt-title">포장하기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
       <label class="option ${orderType eq 'DINEIN' ? 'active' : ''}" data-type="DINEIN">
-        <div><span class="opt-title">매장</span><span class="opt-sub">12~14분</span></div>
+        <div><span class="opt-title">먹고가기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
     </section>
@@ -116,79 +93,192 @@
   </main>
 
   <!-- 하단 버튼 -->
-  <div class="buttons">
-    <button class="btn btn-outline" type="button" onclick="applyCoupon()">쿠폰 사용</button>
-    <form id="checkoutForm" action="<c:url value='/order/checkout'/>" method="post">
-      <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'TAKEOUT'}"/>
-      <input type="hidden" name="couponApplied" id="couponAppliedInput" value="${couponApplied ? 'true' : 'false'}"/>
-      <button class="btn btn-primary" type="submit" id="orderBtn">
-        <span class="badge" id="itemCount">0</span>
-        <span id="orderText">0원 주문하기</span>
-      </button>
-    </form>
-  </div>
-
-  <!-- 바텀 네비(목업) -->
-  <nav class="nav" aria-label="하단 네비게이션">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-  </nav>
+<div class="buttons">
+  <form id="checkoutForm" action="<c:url value='/order/checkout'/>" method="post">
+    <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'TAKEOUT'}"/>
+    <input type="hidden" name="couponApplied" id="couponAppliedInput" value="${couponApplied ? 'true' : 'false'}"/>
+    <input type="hidden" name="cart" id="cartJson"/>
+    <button class="btn btn-primary" type="submit" id="orderBtn">
+      <span class="badge" id="itemCount">0</span>
+      <span id="orderText">0원 주문하기</span>
+    </button>
+  </form>
 </div>
 
-<!-- 서버 액션용 숨은 폼들 -->
-<form id="updateForm" action="<c:url value='/cart/update'/>" method="post" style="display:none">
-  <input type="hidden" name="menuId" id="updMenuId"/>
-  <input type="hidden" name="action" id="updAction"/> <!-- INC | DEC -->
-</form>
-<form id="removeForm" action="<c:url value='/cart/remove'/>" method="post" style="display:none">
-  <input type="hidden" name="menuId" id="rmMenuId"/>
-</form>
+<!-- 하단 네비게이션 include -->
+<jsp:include page="/WEB-INF/views/common/nav.jsp">
+  <jsp:param name="active" value="cart" />
+</jsp:include>
 
+</div>
 <script>
-  // 천단위 포맷
-  const fmt = n => (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  // 합계/개수 갱신
-  function refreshTotals(){
-    const items = Array.from(document.querySelectorAll('.item'));
-    let total = 0, cnt = 0;
-    items.forEach(it=>{
-      const price = Number(it.dataset.price||0);
-      const q = Number(it.querySelector('.count').textContent||0);
-      total += price*q; cnt += q;
-    });
-    document.getElementById('itemCount').textContent = cnt;
-    document.getElementById('orderText').textContent = fmt(total)+'원 주문하기';
-  }
-  refreshTotals();
+/* === LocalStorage Cart Utils === */
+// cart 구조 : { items: { [menuId]: {name, price, qty} } }
+const CART_KEY = 'cart:v1';
 
-  // 수량 업데이트: 서버로 POST (/cart/update)
-  function updateQty(menuId, action){
-    document.getElementById('updMenuId').value = menuId;
-    document.getElementById('updAction').value = action; // INC or DEC
-    document.getElementById('updateForm').submit();
-  }
-  // 삭제: 서버로 POST (/cart/remove)
-  function removeItem(menuId){
-    document.getElementById('rmMenuId').value = menuId;
-    document.getElementById('removeForm').submit();
-  }
+function cartLoad(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || { items:{} }; }
+  catch(e){ return { items:{} }; }
+}
+function cartSave(c){
+  localStorage.setItem(CART_KEY, JSON.stringify(c));
+  try { localStorage.setItem('cart:updated', Date.now().toString()); } catch(e){}
+}
 
-  // 주문 유형 (포장/매장) 토글 → hidden input 반영
-  document.getElementById('orderType').addEventListener('click',(e)=>{
-    const opt = e.target.closest('.option'); if(!opt) return;
-    document.querySelectorAll('#orderType .option').forEach(o=>o.classList.remove('active'));
-    opt.classList.add('active');
-    document.getElementById('orderTypeInput').value = opt.dataset.type; // TAKEOUT | DINEIN
+/* 메뉴 담기: key가 곧 menuId */
+function cartAdd({ menuId, name, price, qty = 1 }){
+  const cart = cartLoad();
+  const k = String(menuId);
+  const it = cart.items[k] || { name: name || '', price: Number(price)||0, qty: 0 };
+  it.qty += Number(qty)||0 || 1;
+  it.price = Number(price)||it.price||0;
+  it.name = it.name || name || '';
+  if (it.qty <= 0) { delete cart.items[k]; } else { cart.items[k] = it; }
+  cartSave(cart);
+}
+
+function fmt(n){ return (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+function renderCart(){
+	  const wrap = document.getElementById('cart');
+	  const { items } = cartLoad();
+	  const entries = Object.entries(items); // [ [menuId, {name,price,qty}], ... ]
+
+	  if(entries.length === 0){
+	    wrap.innerHTML =
+	      '<article class="item" style="justify-content:center">' +
+	        '<div class="name">장바구니가 비어 있어요 ☕</div>' +
+	      '</article>';
+	    refreshTotals();
+	    return;
+	  }
+
+	  wrap.innerHTML = entries.map(([menuId, it])=>{
+	    const priceN = Number(it.price)||0;
+	    const qtyN   = Number(it.qty)||0;
+	    const nameHtml = escapeHtml(it.name||'');
+	    return ''
+	      + '<article class="item" data-menu-id="'+menuId+'" data-price="'+priceN+'">'
+	        + '<div class="item-left">'
+	          + '<div class="name">'+nameHtml+'</div>'
+	          + '<div class="price">'+fmt(priceN)+'원</div>'
+	        + '</div>'
+	        + '<div class="qty">'
+	          + '<button type="button" class="btn-qty" data-act="dec" aria-label="수량감소">−</button>'
+	          + '<div class="count">'+qtyN+'</div>'
+	          + '<button type="button" class="btn-qty" data-act="inc" aria-label="수량증가">+</button>'
+	          + '<button type="button" class="remove" data-act="remove" aria-label="삭제">✕</button>'
+	        + '</div>'
+	      + '</article>';
+	  }).join('');
+
+	  refreshTotals();
+	}
+
+/* XSS 대비 간단 이스케이프 */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* === 합계/개수 === */
+function refreshTotals(){
+  const items = Array.from(document.querySelectorAll('.item'));
+  let total = 0, cnt = 0;
+  items.forEach(it=>{
+    const price = Number(it.dataset.price||0);
+    const q = Number(it.querySelector('.count')?.textContent||0);
+    total += price*q; cnt += q;
   });
+  document.getElementById('itemCount').textContent = cnt;
+  document.getElementById('orderText').textContent = fmt(total)+'원 주문하기';
+}
 
-  // 쿠폰 토글 → hidden input 반영
-  const couponPill = document.getElementById('couponPill');
-  function applyCoupon(){
-    couponPill.classList.toggle('active');
-    document.getElementById('couponAppliedInput').value =
-      couponPill.classList.contains('active') ? 'true' : 'false';
+function updateQty(menuId, delta){
+	  const cart = cartLoad();
+	  const k = String(menuId);
+	  const it = cart.items[k];
+	  if(!it) return;
+
+	  const next = Math.max(0, Math.min(99, (Number(it.qty)||0) + delta));
+	  if(next === 0) delete cart.items[k];
+	  else cart.items[k].qty = next;
+
+	  cartSave(cart);
+	  renderCart();
+	}
+
+	function removeItem(menuId){
+	  const cart = cartLoad();
+	  delete cart.items[String(menuId)];
+	  cartSave(cart);
+	  renderCart();
+	}
+
+	const cartEl = document.getElementById('cart');
+	cartEl.addEventListener('click', (e)=>{
+	  const t = e.target instanceof Element ? e.target : e.target && e.target.parentElement;
+	  if(!t) return;
+
+	  const btn = t.closest('button');
+	  if(!btn) return;
+
+	  const itemEl = t.closest('.item');
+	  if(!itemEl) return;
+
+	  const menuId = itemEl.dataset.menuId;   // ✅ key로 박아둔 값
+	  const act = btn.dataset.act;
+
+	  if (act === 'inc')      updateQty(menuId, +1);
+	  else if (act === 'dec') updateQty(menuId, -1);
+	  else if (act === 'remove') removeItem(menuId);
+	});
+
+
+/* === 주문 유형 토글 → hidden input 반영 === */
+document.getElementById('orderType').addEventListener('click',(e)=>{
+  const opt = e.target.closest('.option'); if(!opt) return;
+  document.querySelectorAll('#orderType .option').forEach(o=>o.classList.remove('active'));
+  opt.classList.add('active');
+  document.getElementById('orderTypeInput').value = opt.dataset.type; // TAKEOUT | DINEIN
+});
+
+/* === 쿠폰 토글 → hidden input 반영 === */
+const couponPill = document.getElementById('couponPill');
+function applyCoupon(){
+  couponPill.classList.toggle('active');
+  document.getElementById('couponAppliedInput').value =
+    couponPill.classList.contains('active') ? 'true' : 'false';
+}
+couponPill.addEventListener('click', applyCoupon);
+couponPill.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyCoupon(); } });
+
+/* === 체크아웃: cart JSON 담아서 서버로 전송 === */
+document.getElementById('checkoutForm').addEventListener('submit', (e)=>{
+  const { items } = cartLoad();
+  const rows = Object.entries(items).map(([menuId, it])=>({
+    menuId,
+    name: it.name,
+    price: Number(it.price)||0,
+    qty: Number(it.qty)||0
+  }));
+
+  if(rows.length === 0){
+    e.preventDefault();
+    alert('장바구니가 비어 있습니다.');
+    return;
   }
-  couponPill.addEventListener('click', applyCoupon);
-  couponPill.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyCoupon(); } });
+
+  document.getElementById('cartJson').value = JSON.stringify(rows);
+
+  // (옵션) 총합도 보내고 싶다면 hidden 추가해서 세팅
+  // const total = rows.reduce((s,r)=> s + r.price*r.qty, 0);
+  // document.getElementById('totalPriceInput').value = total;
+});
+
+/* === 초기 렌더 === */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderCart();
+});
 </script>
 </body>
 </html>
