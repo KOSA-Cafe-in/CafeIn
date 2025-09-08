@@ -9,8 +9,8 @@ public class MenuDTO {
     private Long menuId;
     private String name;
     private String content;
-    private Long price;
-    private String menuPictureUrl; // CLOB → String
+    private int price;
+    private String menuPictureUrl;
     private Date createdDate;
     private Date modifiedDate;
 }

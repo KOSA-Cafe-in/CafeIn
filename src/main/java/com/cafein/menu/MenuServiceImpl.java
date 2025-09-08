@@ -18,6 +18,15 @@ public class MenuServiceImpl implements MenuService {
     private S3Uploader s3Uploader;
 
     @Override
+    public List<MenuDTO> getAllMenus() {
+        return menuMapper.findAll();
+    }
+    @Override
+    public MenuDTO getMenuById(Long menuId) {
+        return menuMapper.findById(menuId);
+    }
+    
+    @Override
     public void createMenu(MenuDTO dto, MultipartFile imageFile) throws Exception {
         if (imageFile != null && !imageFile.isEmpty()) {
             String imageUrl = s3Uploader.upload(imageFile, "menu");

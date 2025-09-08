@@ -10,5 +10,6 @@ public interface MenuService {
     MenuDTO findById(Long id);
     void updateMenu(MenuDTO menuDTO, MultipartFile imageFile) throws Exception;
     void deleteMenu(Long id);
-    
+    List<MenuDTO> getAllMenus();
+    MenuDTO getMenuById(Long menuId);
 }

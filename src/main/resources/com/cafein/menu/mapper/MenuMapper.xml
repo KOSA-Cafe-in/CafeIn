@@ -1,8 +1,31 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.cafein.menu.mapper.MenuMapper">
 
-  <!-- 메뉴 등록: createdDate/modifiedDate는 트리거가 넣으니 컬럼/값 생략 -->
+	<resultMap id="MenuResultMap" type="com.cafein.menu.MenuDTO">
+		<id property="menuId" column="menuid" />
+		<result property="name" column="name" />
+		<result property="content" column="content" />
+		<result property="price" column="price" />
+		<result property="menuPictureUrl" column="menu_picture_url" />
+		<result property="createdDate" column="create_date"
+			javaType="java.util.Date" />
+		<result property="modifiedDate" column="modified_date"
+			javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="findAll" resultMap="MenuResultMap">
+		SELECT * FROM menu ORDER BY createdDate DESC
+	</select>
+
+	<select id="findById" resultMap="MenuResultMap"
+		parameterType="java.lang.Long">
+		SELECT * FROM menu WHERE menuid = #{menuId}
+	</select>
+	
+	<!-- 메뉴 등록: createdDate/modifiedDate는 트리거가 넣으니 컬럼/값 생략 -->
   <insert id="createMenu" parameterType="com.cafein.menu.MenuDTO">
     INSERT INTO Menu (
       menuId,
@@ -63,5 +86,4 @@
   DELETE FROM Menu
   WHERE menuId = #{id}   <!-- ✅ @Param("id")와 일치 -->
 </delete>
-
 </mapper>

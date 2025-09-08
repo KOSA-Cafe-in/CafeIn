@@ -1,10 +1,17 @@
 package com.cafein.menu.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.cafein.menu.MenuDTO;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;  // ✅ 추가
 
+@Mapper
 public interface MenuMapper {
+
+    List<MenuDTO> findAll();
+    
+    MenuDTO findById(Long menuId);
     void createMenu(MenuDTO dto);
     List<MenuDTO> findAllMenus();
 

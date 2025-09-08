@@ -7,12 +7,15 @@
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
-	<annotation-driven/>
+	<annotation-driven />
 	<resources mapping="/resources/**" location="/resources/" />
 
+	<view-controller path="/admin/home" view-name="redirect:/admin/home"/>
+	<view-controller path="/user/home"     view-name="redirect:/user/home"/>
+	
 	<!-- 기존 /home 또는 / 로 들어오면 user 홈으로 리다이렉트 -->
-	<view-controller path="/home" view-name="redirect:/admin/home"/>
-	<view-controller path="/"     view-name="redirect:/admin/home"/>
+	<view-controller path="/home" view-name="redirect:/user/home"/>
+	<view-controller path="/"     view-name="redirect:/user/home"/>
 
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
@@ -23,8 +26,8 @@
 	<!-- AWS S3 연동용 프로퍼티 -->
 	<context:property-placeholder location="classpath:s3.properties" />
 
-	<!-- 파일 업로드 지원 -->
 	<beans:bean id="multipartResolver"
-        class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />
+    class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+    </beans:bean>
 
 </beans:beans>
