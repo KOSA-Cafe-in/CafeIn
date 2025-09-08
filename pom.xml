@@ -34,6 +34,18 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.0.7.RELEASE</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-oauth2-client</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		
+		 <dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-oauth2-jose</artifactId>
+	        <version>5.0.7.RELEASE</version>
+	    </dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-taglibs -->
 		<dependency>
@@ -41,7 +53,25 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<version>5.0.7.RELEASE</version>
 		</dependency>
-
+		
+		<!-- jjwt -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-api</artifactId>
+		    <version>0.11.5</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-impl</artifactId>
+		    <version>0.11.5</version>
+		    <scope>runtime</scope>
+		</dependency>
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt-jackson</artifactId> 
+		    <version>0.11.5</version>
+		    <scope>runtime</scope>
+		</dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8 -->
@@ -59,19 +89,38 @@
 			<version>0.4.8</version>
 		</dependency>
 
-
+		<!-- jackson-core -->
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-core</artifactId>
+		  <version>2.15.3</version>
+		</dependency>
+		
 		<!--Jackson-databind -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.6</version>
-		</dependency>
+			<version>2.15.3</version>
+		</dependency>	
 
-		<!--Jackson-dataformat -->
+		<!-- jackson-annotations -->
 		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.9.6</version>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-annotations</artifactId>
+		  <version>2.15.3</version>
+		</dependency>
+		
+		<!-- jackson-dataformat-xml -->
+		<dependency>
+		  <groupId>com.fasterxml.jackson.dataformat</groupId>
+		  <artifactId>jackson-dataformat-xml</artifactId>
+		  <version>2.15.3</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.14</version>
 		</dependency>
 
 		<!--Json -->
@@ -145,6 +194,13 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<!-- aws_s3 -->
+		<dependency>
+  			<groupId>com.amazonaws</groupId>
+  			<artifactId>aws-java-sdk-s3</artifactId>
+  			<version>1.12.535</version>
 		</dependency>
 
 		<!-- log4jdbc-log4j2 -->

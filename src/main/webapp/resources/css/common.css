@@ -1,5 +1,6 @@
 :root { 
 	--bg: #f6f7fb; 
+	--paper:#ffffff;
 	--card: #ffffff; 
 	--text: #111827; 
 	--sub: #6b7280; 
@@ -7,9 +8,15 @@
 	--border: #e5e7eb; 
 	--success: #059669; 
 	--danger: #dc2626;
+	--line:#ececec;
+    --muted:#9b9b9b;
+    --accent:#b77448; /* 하단 마이 아이콘 색감 */
+    --input-placeholder:#9c7a66;
 }
 
 * {
+	margin: 0;
+    padding: 0;
 	box-sizing: border-box
 }
 
@@ -30,7 +37,7 @@ body {
 	max-width: 420px;
 	width: 100%;
 	margin: 0 auto;
-	background: var(--bg);
+	background: var(--card);
 	display: flex;
 	flex-direction: column;
 	border-left: 1px solid var(--border);
