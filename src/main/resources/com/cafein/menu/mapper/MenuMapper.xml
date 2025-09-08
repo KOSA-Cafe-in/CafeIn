@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafein.menu.mapper.MenuMapper">
+
+  <!-- 메뉴 등록: createdDate/modifiedDate는 트리거가 넣으니 컬럼/값 생략 -->
+  <insert id="createMenu" parameterType="com.cafein.menu.MenuDTO">
+    INSERT INTO Menu (
+      menuId,
+      name,
+      content,
+      price,
+      menuPictureUrl
+    ) VALUES (
+      MENU_SEQ.NEXTVAL,
+      #{name},
+      #{content},
+      #{price},
+      #{menuPictureUrl, jdbcType=CLOB}
+    )
+  </insert>
+
+  <!-- 메뉴 전체 조회 -->
+  <select id="findAllMenus" resultType="com.cafein.menu.MenuDTO">
+    SELECT
+      menuId           AS menuId,
+      name             AS name,
+      content          AS content,
+      price            AS price,
+      menuPictureUrl   AS menuPictureUrl,
+      createdDate      AS createdDate,
+      modifiedDate     AS modifiedDate
+    FROM Menu
+    ORDER BY menuId DESC
+  </select>
+
+  <!-- ===== 추가: 메뉴 단건 조회 ===== -->
+  <select id="findMenuById" parameterType="long" resultType="com.cafein.menu.MenuDTO">
+  SELECT
+    menuId         AS menuId,
+    name           AS name,
+    content        AS content,
+    price          AS price,
+    menuPictureUrl AS menuPictureUrl,
+    createdDate    AS createdDate,
+    modifiedDate   AS modifiedDate
+  FROM Menu
+  WHERE menuId = #{id}   <!-- ✅ @Param("id")와 일치 -->
+</select>
+
+<update id="updateMenu" parameterType="com.cafein.menu.MenuDTO">
+  UPDATE Menu
+  <set>
+    <if test="name != null">name = #{name},</if>
+    <if test="content != null">content = #{content},</if>
+    <if test="price != null">price = #{price},</if>
+    <if test="menuPictureUrl != null">menuPictureUrl = #{menuPictureUrl, jdbcType=CLOB},</if>
+    modifiedDate = SYSDATE
+  </set>
+  WHERE menuId = #{menuId}
+</update>
+
+<delete id="deleteMenu" parameterType="long">
+  DELETE FROM Menu
+  WHERE menuId = #{id}   <!-- ✅ @Param("id")와 일치 -->
+</delete>
+
+</mapper>
