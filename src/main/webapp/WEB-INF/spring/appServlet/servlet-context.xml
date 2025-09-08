@@ -10,9 +10,13 @@
 	<annotation-driven/>
 	<resources mapping="/resources/**" location="/resources/" />
 
+	<!-- admin/user 각각의 home.jsp로 바로 매핑 -->
+	<view-controller path="/user/home"  view-name="user/home"/>
+	<view-controller path="/admin/home" view-name="admin/home"/>
+	
 	<!-- 기존 /home 또는 / 로 들어오면 user 홈으로 리다이렉트 -->
-	<view-controller path="/home" view-name="redirect:/admin/home"/>
-	<view-controller path="/"     view-name="redirect:/admin/home"/>
+	<view-controller path="/home" view-name="redirect:/user/home"/>
+	<view-controller path="/"     view-name="redirect:/user/home"/>
 
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
