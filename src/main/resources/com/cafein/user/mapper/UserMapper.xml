@@ -3,6 +3,31 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cafein.user.UserMapper">
-
+<mapper namespace="com.cafein.user.mapper.UserMapper">
+	<!-- userId로 조회 (Long userId) -->
+	<select id="findUserById" resultType="com.cafein.user.UserDTO" parameterType="long">
+		SELECT userId, socialProvider, socialId, nickname, email, createdDate, modifiedDate
+		FROM Users		
+		WHERE userId = #{userId}
+	</select>
+	
+	    <!-- socialProvider, socialId로 조회 (String, Long) -->
+    <select id="findUserBySocial" resultType="com.cafein.user.UserDTO">
+        SELECT userId, socialProvider, socialId, nickname, email, createdDate, modifiedDate
+        FROM Users 
+        WHERE socialProvider = #{socialProvider} AND socialId = #{socialId}
+    </select>
+    
+    <!-- 사용자 생성 -->
+    <insert id="createUser" parameterType="map" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO Users (socialProvider, socialId, nickname, email)
+        VALUES (#{socialProvider}, #{socialId}, #{nickname}, #{email})
+    </insert>
+    
+    <!-- 사용자 닉네임 변경 -->
+    <update id="updateUserNickname" parameterType="map">
+        UPDATE Users
+        SET nickname = #{nickname}, modifiedDate = SYSDATE
+        WHERE userId = #{userId}
+    </update>    
  </mapper> 

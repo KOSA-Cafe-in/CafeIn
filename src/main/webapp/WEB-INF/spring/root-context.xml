@@ -10,7 +10,7 @@
 
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-
+	
 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 		<property name="driverClassName"
 			value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
@@ -26,12 +26,18 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-    	<property name="dataSource" ref="dataSource"/>
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-
+	
 	<mybatis-spring:scan
-		base-package="com.cafein.menu.mapper, com.cafein.cafe.mapper, com.cafein.order.mapper" />
+		base-package="com.cafein.menu.mapper,
+					  com.cafein.cafe.mapper, 
+					  com.cafein.order.mapper,
+					  com.cafein.user.mapper,
+					  com.cafein.usercafe.mapper" />
+
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>

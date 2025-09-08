@@ -4,7 +4,7 @@
 <header class="appbar">
   <div class="left">
     <c:if test="${param.backLink != null}">
-      <a href="${param.backLink}" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
+      <a href="javascript:history.back()" style="color: var(--primary); font-weight: 700; font-size: 14px; text-decoration: none;">
         <i class="fa-solid fa-angle-left"></i>
       </a>
     </c:if>

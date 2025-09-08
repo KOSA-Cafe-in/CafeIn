@@ -1,8 +1,9 @@
 package com.cafein.order;
 
 import java.util.Date;
-import lombok.Data;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class OrderDTO {
