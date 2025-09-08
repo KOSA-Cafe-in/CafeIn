@@ -37,7 +37,7 @@ body {
 	max-width: 420px;
 	width: 100%;
 	margin: 0 auto;
-	background: var(--bg);
+	background: var(--card);
 	display: flex;
 	flex-direction: column;
 	border-left: 1px solid var(--border);

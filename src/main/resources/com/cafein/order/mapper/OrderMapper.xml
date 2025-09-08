@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafein.order.mapper.OrderMapper">
+
+  <!-- 카페의 최신 주문 목록 -->
+  <select id="findRecentOrdersForCafe" parameterType="long"
+          resultType="com.cafein.order.OrderDTO">
+    SELECT
+      o.orderId          AS orderId,
+      uc.userId          AS userId,
+      uc.cafeId          AS cafeId,
+      o.paymentMethod    AS paymentMethod,
+      o.totalPrice       AS totalPrice,
+      o.createdDate      AS createdDate,
+      o.status           AS status,
+      o.takeout          AS takeout,
+      o.couponUse        AS couponUse
+    FROM Orders o
+    JOIN UserCafe uc
+      ON o.userCafeId = uc.userCafeId
+    WHERE uc.cafeId = #{cafeId}
+    ORDER BY o.createdDate DESC
+  </select>
+
+  <!-- 주문별 아이템 목록 (메뉴 이름 포함) -->
+  <select id="findItemsByOrderId" parameterType="long"
+          resultType="com.cafein.order.OrderItemDTO">
+    SELECT
+      oi.orderItemId   AS orderItemId,
+      oi.orderId       AS orderId,
+      oi.menuId        AS menuId,
+      oi.count         AS count,
+      oi.unitPrice     AS unitPrice,
+      m.name           AS menuName
+    FROM OrderItem oi
+    JOIN Menu m ON m.menuId = oi.menuId
+    WHERE oi.orderId = #{orderId}
+    ORDER BY oi.orderItemId
+  </select>
+
+  <!-- 완료 처리 -->
+  <update id="markDone" parameterType="long">
+    UPDATE Orders
+       SET status = 'Y'
+     WHERE orderId = #{orderId}
+  </update>
+
+</mapper>

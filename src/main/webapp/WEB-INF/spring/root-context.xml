@@ -30,12 +30,13 @@
 		class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-	<mybatis-spring:scan base-package="com.cafein.user.mapper" />
-	<mybatis-spring:scan base-package="com.cafein.cafe.mapper" />
-	<mybatis-spring:scan base-package="com.cafein.usercafe.mapper" />
-
-	<context:component-scan
-		base-package="com.cafein"></context:component-scan>
+	
+	<mybatis-spring:scan
+		base-package="com.cafein.menu.mapper,
+					  com.cafein.cafe.mapper, 
+					  com.cafein.order.mapper,
+					  com.cafein.user.mapper,
+					  com.cafein.usercafe.mapper" />
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

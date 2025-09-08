@@ -1,6 +1,6 @@
 package com.cafein.usercafe;
 
-import java.sql.Date;
+import java.util.Date;
 
 import lombok.Data;
 

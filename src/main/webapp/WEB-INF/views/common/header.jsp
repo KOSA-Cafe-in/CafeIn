@@ -14,7 +14,7 @@
   
   <div class="right">
     <c:if test="${param.showOrderHistory != 'false'}">
-      <a href="${pageContext.request.contextPath}/admin/order/history">주문내역</a>
+      <a href="${pageContext.request.contextPath}/admin/orders">주문내역</a>
     </c:if>
   </div>
 </header>
