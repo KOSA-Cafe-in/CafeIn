@@ -1,102 +1,215 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page session="false" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>토스 카페</title>
+  <title>리틀리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff"/>
   <%@ include file="/WEB-INF/views/common/head.jsp" %>
 </head>
 <body>
-  <div class="phone">
+<div class="phone">
+  <!-- 헤더 include -->
+  <jsp:include page="/WEB-INF/views/common/header.jsp">
+    <jsp:param name="showOrderHistory" value="true" />
+  </jsp:include>
 
-    <!-- 헤더 include -->
-    <jsp:include page="/WEB-INF/views/common/header.jsp">
-      <jsp:param name="title" value="메뉴" />
-      <jsp:param name="showOrderHistory" value="true" />
-    </jsp:include>
+  <main class="content">
+    <h1 class="title">리틀리</h1>
 
-    <!-- 본문 -->
-    <main class="content">
+    <!-- 소개글 영역 -->
+    <div class="cafe-intro">
+      <!-- 처음엔 비워두고 data-full 로만 전달 -->
+      <p id="intro-text"
+         data-full="${fn:escapeXml(cafeIntro)}"
+         data-empty="연필을 눌러 소개글을 수정하세요:)"></p>
 
-      <!-- 공지 -->
-      <section class="notice" aria-label="가게 공지">
-        <span class="icon">🔔</span>
-        <div class="msg">1인당 1메뉴 부탁드려요 :)</div>
-        <span class="chev">▾</span>
-      </section>
-
-      <!-- 이벤트 -->
-      <h2 class="section-title">이벤트</h2>
-      <article class="card">
-        <div class="stack">
-          <span class="eyebrow">네이버 리뷰 이벤트</span>
-          <div class="name">리뷰쓰고 마카롱 1개 받기</div>
-          <div class="price">0원</div>
-          <p class="desc">이벤트에 참여해주시면 직원이 리뷰작성용 영수증을 가져다드려요.</p>
-        </div>
-        <button class="plus" aria-label="이벤트 담기">+</button>
-      </article>
-
-      <!-- 샌드위치 -->
-      <h2 class="section-title">샌드위치</h2>
-      <div class="list">
-
-        <article class="card">
-          <div class="stack">
-            <div class="badges">
-              <span class="badge best">인기</span>
-            </div>
-            <div class="name">루꼴라 크로와상 샌드위치</div>
-            <div class="price">7,500원</div>
-            <p class="desc">크림치즈, 햄, 토마토, 루꼴라, 로메인이 들어간 건강한 샌드위치</p>
-          </div>
-          <button class="plus" aria-label="루꼴라 크로와상 샌드위치 담기">+</button>
-        </article>
-
-        <article class="card">
-          <div class="stack">
-            <div class="badges">
-              <span class="badge hot">신규</span>
-            </div>
-            <div class="name">햄치즈 통밀 샌드위치</div>
-            <div class="price">7,000원</div>
-            <p class="desc">건강한 통밀빵에 햄, 치즈, 신선한 야채가 듬뿍 들어간 담백한 샌드위치</p>
-          </div>
-          <button class="plus" aria-label="햄치즈 통밀 샌드위치 담기">+</button>
-        </article>
-
+      <div class="intro-actions">
+        <button id="btn-more" class="icon-button" style="display:none;">더보기</button>
+        <button id="btn-edit" class="icon-button" aria-label="소개글 수정">✏️</button>
       </div>
 
-      <div class="divider"></div>
+      <form id="intro-form" style="display:none;"
+            method="post" action="${pageContext.request.contextPath}/admin/home/updateIntro">
+        <textarea name="content" id="intro-textarea" rows="3" maxlength="3000">${cafeIntro}</textarea>
+        <div class="intro-counter"><span id="intro-count">0</span>/3000</div>
+        <button type="submit">저장</button>
+      </form>
+    </div>
 
-      <!-- 커피 -->
-      <h2 class="section-title">커피</h2>
-      <article class="card">
-        <div class="stack">
-          <div class="name">메뉴 준비중</div>
-          <p class="desc">커피 메뉴가 곧 업데이트 됩니다.</p>
+    <!-- 메뉴 추가 버튼 -->
+    <div class="menu-actions">
+      <a href="${pageContext.request.contextPath}/admin/menu/add" class="menu-add-btn">메뉴 추가</a>
+    </div>
+
+    <!-- 메뉴 리스트 -->
+    <div class="menu-list">
+      <c:forEach var="menu" items="${menuList}">
+        <!-- ✅ 카드 전체 클릭 가능 + 오른쪽 화살표 -->
+        <div class="menu-item menu-clickable"
+             onclick="location.href='${pageContext.request.contextPath}/admin/menu/${menu.menuId}/edit'">
+          <img src="${menu.menuPictureUrl}" alt="${menu.name}" class="menu-img"/>
+          <div class="menu-info">
+            <h3>${menu.name}</h3>
+            <p>${menu.content}</p>
+            <strong><fmt:formatNumber value="${menu.price}" type="number"/>원</strong>
+          </div>
+          <div class="menu-arrow" aria-hidden="true">➡️</div>
         </div>
-        <button class="plus" aria-label="담기">+</button>
-      </article>
+      </c:forEach>
+    </div>
+  </main>
 
-    </main>
-    
-    <!-- 하단 네비게이션 include -->
-    <jsp:include page="/WEB-INF/views/common/nav.jsp">
-      <jsp:param name="active" value="home" />
-    </jsp:include>
+  <!-- 하단 네비게이션 include -->
+  <jsp:include page="/WEB-INF/views/common/nav.jsp">
+    <jsp:param name="active" value="home" />
+  </jsp:include>
+</div>
 
-  </div>
+<style>
+  .home-wrap { max-width: 560px; margin: 0 auto; padding: 16px; }
+  .title { font-size: 24px; font-weight: bold; margin-bottom: 12px; text-align: center; }
 
-  <script>
-    // 데모용: + 버튼 클릭 시 알림
-    document.querySelectorAll('.plus').forEach(btn=>{
-      btn.addEventListener('click', ()=> alert('장바구니에 담겼습니다. (데모)'));
+  .cafe-intro { background: #f9f9f9; border-radius: 12px; padding: 12px; margin-bottom: 16px; position: relative; }
+  #intro-text { font-size: 14px; margin: 0; white-space: pre-wrap; }
+
+  .intro-actions { margin-top: 6px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: nowrap; }
+  .icon-button { background: none; border: none; font-size: 14px; cursor: pointer; white-space: nowrap; }
+
+  .menu-actions { text-align: right; margin-bottom: 16px; }
+  .menu-add-btn { padding: 8px 16px; background: #2e6cff; color: #fff; text-decoration: none; border-radius: 8px; }
+
+  .menu-list { display: flex; flex-direction: column; gap: 12px; }
+  .menu-item { display: flex; gap: 12px; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
+  .menu-img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; background: #ddd; }
+  .menu-info h3 { margin: 0; font-size: 16px; }
+  .menu-info p { margin: 4px 0; font-size: 14px; color: #666; }
+
+  /* 1줄로 접기 */
+  .clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* textarea 고정 */
+  #intro-textarea {
+    width: 100%;
+    height: 84px;              /* 고정 높이 */
+    resize: none !important;   /* 크기 변경 방지 */
+    overflow: auto;
+    box-sizing: border-box;
+  }
+  .intro-counter { font-size: 12px; color: #999; text-align: right; margin: 4px 0 8px; }
+
+  /* ✅ 메뉴 카드 클릭/화살표 스타일 추가 */
+  .menu-clickable { cursor: pointer; position: relative; }
+  .menu-arrow { margin-left: auto; align-self: center; font-size: 18px; opacity: .7; }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var p = document.getElementById('intro-text');
+    var moreBtn = document.getElementById('btn-more');
+    var editBtn = document.getElementById('btn-edit');
+    var form = document.getElementById('intro-form');
+    var ta = document.getElementById('intro-textarea');
+    var count = document.getElementById('intro-count');
+
+    var full = (p.getAttribute('data-full') || '').trim();
+    var emptyText = p.getAttribute('data-empty') || '';
+
+    function firstLine(s){ return (s || '').split(/\r?\n/)[0]; }
+
+    function renderCollapsed() {
+      var show = full && full.length > 0;
+      p.textContent = show ? firstLine(full) : emptyText;
+      p.classList.add('clamp-1');
+
+      // 필요 시 더보기 노출: 실제 높이 vs 한 줄 높이 비교
+      // 전체 높이 측정
+      var prev = p.textContent;
+      p.classList.remove('clamp-1');
+      p.textContent = full || '';
+      var fullHeight = p.scrollHeight;
+
+      // 한 줄 높이 = 계산된 line-height
+      var lh = parseFloat(window.getComputedStyle(p).lineHeight) || 20;
+
+      // 복귀 + 첫 줄 표시
+      p.classList.add('clamp-1');
+      p.textContent = show ? firstLine(full) : emptyText;
+
+      var needMore = show && fullHeight > lh * 1.2;
+      moreBtn.style.display = needMore ? 'inline-block' : 'none';
+      moreBtn.textContent = '더보기';
+      moreBtn.setAttribute('data-expanded','0');
+    }
+
+    function renderExpanded() {
+      p.classList.remove('clamp-1');
+      p.textContent = full || emptyText;
+      moreBtn.textContent = '접기';
+      moreBtn.setAttribute('data-expanded','1');
+    }
+
+    // 초기 렌더(첫 줄만)
+    renderCollapsed();
+
+    // 더보기/접기
+    moreBtn.addEventListener('click', function(){
+      var expanded = moreBtn.getAttribute('data-expanded') === '1';
+      if (expanded) renderCollapsed(); else renderExpanded();
     });
-  </script>
+
+    // ✏️ 폼 토글
+    editBtn.addEventListener('click', function(){
+      var open = form.style.display === 'block';
+      form.style.display = open ? 'none' : 'block';
+      if (!open && ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    });
+
+    // 글자수 카운터
+    function updateCount(){
+      if (!ta) return;
+      if (ta.value.length > 3000) ta.value = ta.value.substring(0,3000);
+      count.textContent = ta.value.length;
+    }
+    updateCount();
+    ta.addEventListener('input', updateCount);
+
+    // AJAX 저장
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var val = (ta.value || '').substring(0,3000);
+
+      fetch(form.getAttribute('action'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body: 'content=' + encodeURIComponent(val)
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(json){
+        if (!json || !json.ok) throw new Error('저장 실패');
+        full = (json.content || '').trim();
+        renderCollapsed();            // 저장 후 접힌 상태로
+        form.style.display = 'none';  // 에디터 닫기
+      })['catch'](function(err){       // ← JSP 편집기의 .catch 오탐 방지
+        alert('저장 중 오류가 발생했습니다.');
+        console.error(err);
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

@@ -26,16 +26,12 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="SqlSessionFactory"
-		class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"></property>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource"/>
 	</bean>
+
 	<mybatis-spring:scan
-		base-package="com.cafein.mapper" />
-
-	<context:component-scan
-		base-package="com.cafein.service"></context:component-scan>
-
+		base-package="com.cafein.menu.mapper, com.cafein.cafe.mapper, com.cafein.order.mapper" />
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
