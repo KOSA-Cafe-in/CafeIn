@@ -15,4 +15,7 @@ public interface OrderMapper {
 
     // 완료 처리 (status = 'Y')  → 영향 행 수 반환
     int markDone(@Param("orderId") Long orderId);
+    
+    int countPendingForCafe(@Param("cafeId") Long cafeId);
+
 }

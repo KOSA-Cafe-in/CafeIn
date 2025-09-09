@@ -45,5 +45,14 @@
        SET status = 'Y'
      WHERE orderId = #{orderId}
   </update>
+  
+  <select id="countPendingForCafe" parameterType="long" resultType="int">
+    SELECT COUNT(*)
+    FROM Orders o
+    JOIN UserCafe uc ON o.userCafeId = uc.userCafeId
+    WHERE uc.cafeId = #{cafeId}
+     AND o.status = 'N'
+  </select>
+  
 
 </mapper>

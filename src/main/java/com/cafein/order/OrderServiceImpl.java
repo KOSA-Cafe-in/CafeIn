@@ -28,4 +28,10 @@ public class OrderServiceImpl implements OrderService {
     public int markDone(Long orderId) {
         return orderMapper.markDone(orderId); // 1(성공) 기대
     }
+    
+    @Override
+    public int countPendingForCafe(Long cafeId) {
+        return orderMapper.countPendingForCafe(cafeId);
+    }
+
 }

@@ -8,4 +8,7 @@ public interface OrderService {
 
     // 주문 완료 처리 (status: 'Y') → 영향 행 수 반환
     int markDone(Long orderId);
+    
+    int countPendingForCafe(Long cafeId);
+
 }
