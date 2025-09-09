@@ -45,5 +45,28 @@
        SET status = 'Y'
      WHERE orderId = #{orderId}
   </update>
+  
+  <select id="countPendingForCafe" parameterType="long" resultType="int">
+    SELECT COUNT(*)
+    FROM Orders o
+    JOIN UserCafe uc ON o.userCafeId = uc.userCafeId
+    WHERE uc.cafeId = #{cafeId}
+     AND o.status = 'N'
+  </select>
+  
+  <!-- ...기존 mapper 내용 유지... -->
+
+<!-- 유저+카페 기준으로 주문 음료 총 개수 합산 -->
+  <select id="sumDrinkCountByUserAndCafe" resultType="int">
+    SELECT NVL(SUM(oi.count), 0)
+    FROM Orders o
+    JOIN OrderItem oi ON oi.orderId = o.orderId
+    JOIN UserCafe uc ON uc.userCafeId = o.userCafeId
+    WHERE uc.userId = #{userId}
+     AND uc.cafeId = #{cafeId}
+    -- 취소/삭제 개념이 있으면 여기서 제외 조건 추가
+  </select>
+  
+  
 
 </mapper>
