@@ -85,8 +85,7 @@
 	        <div class="value"><c:out value="${user.email}"/></div>
 	      </div>
 	    </div>
-	
-		<hr/>
+
 	    <div class="divider"></div>
 	    
 	      <!-- 스탬프 영역 -->
