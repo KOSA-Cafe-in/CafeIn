@@ -33,5 +33,10 @@ public class OrderServiceImpl implements OrderService {
     public int countPendingForCafe(Long cafeId) {
         return orderMapper.countPendingForCafe(cafeId);
     }
+    
+    @Override
+    public int sumDrinkCountByUserAndCafe(Long userId, Long cafeId) {
+        return orderMapper.sumDrinkCountByUserAndCafe(userId, cafeId);
+    }
 
 }

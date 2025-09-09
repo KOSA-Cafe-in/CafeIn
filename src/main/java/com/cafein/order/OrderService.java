@@ -10,5 +10,7 @@ public interface OrderService {
     int markDone(Long orderId);
     
     int countPendingForCafe(Long cafeId);
+    
+    int sumDrinkCountByUserAndCafe(Long userId, Long cafeId);
 
 }
