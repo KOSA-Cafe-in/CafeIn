@@ -156,7 +156,6 @@
   // 완료 처리 (AJAX)
   document.addEventListener('click', function (e) {
     var target = e.target;
-    // closest 대체(ES5)
     while (target && !(target.classList && target.classList.contains('js-done'))) {
       target = target.parentNode;
     }
@@ -164,31 +163,33 @@
 
     var orderId = target.getAttribute('data-id');
 
-    // POST /admin/orders/{orderId}/done
     fetch(CTX + '/admin/orders/' + orderId + '/done', {
       method: 'POST',
       headers: { 'Accept': 'application/json' }
     })
     .then(function (res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok) { throw new Error('HTTP ' + res.status); }
       return res.json();
     })
     .then(function (json) {
-      if (!json || !json.ok) throw new Error('update failed');
+      if (!json || !json.ok) { throw new Error('update failed'); }
 
       var card = document.getElementById('order-' + orderId);
       if (card) {
-        target.parentNode.removeChild(target); // 버튼 제거
-        panelDone.insertBefore(card, panelDone.firstChild); // 완료 탭으로 이동
-        tabDone.click();     // 완료 탭으로 전환
-        setCounts();         // 카운트 갱신
+        target.parentNode.removeChild(target);
+        panelDone.insertBefore(card, panelDone.firstChild);
+        setCounts();
       }
-    })
-    .catch(function (err) {
+    })['catch'](function (err) {  // ✅ JSP 편집기의 .catch 경고 회피
       alert('상태 변경 중 오류가 발생했습니다.');
       if (window.console) console.error(err);
     });
   });
+
+  // ✅ 페이지 진입 시 '본 것으로 처리' (세션 기준 리셋)
+  (function markSeenOnEnter(){
+    try { fetch(CTX + '/admin/order/markSeen', { method: 'POST' }); } catch(e) {}
+  })();
 </script>
 </body>
 </html>
