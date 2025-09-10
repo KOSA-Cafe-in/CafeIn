@@ -6,12 +6,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import javax.servlet.http.HttpSession;
 import javax.annotation.Resource;
+
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import com.cafein.order.OrderDTO;
 import com.cafein.order.OrderService;
 
 @Controller
@@ -124,6 +128,54 @@ public class AdminMenuController {
         int updated = orderService.markDone(orderId);
         Map<String, Object> res = new HashMap<>();
         res.put("ok", updated > 0);
+        return res;
+    }
+
+ // =========================
+    // ✅ (추가) 신규 '처리중(N)' 카운트 (홈에서 3초 폴링)
+    // - 세션에 저장된 lastSeenOrderId 이후 생성된 'N' 상태만 카운트
+    // - OrderService 변경 없이, 목록 조회로 계산
+    // =========================
+    @GetMapping(value = "/order/pendingCount", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public Map<String, Object> pendingCount(HttpSession session) {
+        // 세션 키: 카페별 lastSeen
+        final String key = "lastSeenOrderId:" + CAFE_ID;
+        Long lastSeen = (Long) session.getAttribute(key);
+
+        List<OrderDTO> all = orderService.findRecentOrdersForCafe(CAFE_ID);
+        long count = all.stream()
+                .filter(o -> o != null && "N".equals(o.getStatus()))
+                .filter(o -> lastSeen == null || (o.getOrderId() != null && o.getOrderId() > lastSeen))
+                .count();
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("count", count);
+        return res;
+    }
+
+    // =========================
+    // ✅ (추가) '주문내역' 진입 시 기준점 리셋
+    // - 현재 카페의 최대 orderId를 세션에 저장 → 홈의 폴링 뱃지 0으로
+    // =========================
+    @PostMapping(value = "/order/markSeen", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public Map<String, Object> markSeen(HttpSession session) {
+        final String key = "lastSeenOrderId:" + CAFE_ID;
+
+        List<OrderDTO> all = orderService.findRecentOrdersForCafe(CAFE_ID);
+        Long maxId = all.stream()
+                .filter(Objects::nonNull)
+                .map(OrderDTO::getOrderId)
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(0L);
+
+        session.setAttribute(key, maxId);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("ok", true);
+        res.put("lastSeen", maxId);
         return res;
     }
 }

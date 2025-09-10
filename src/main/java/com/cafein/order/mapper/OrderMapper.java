@@ -26,5 +26,12 @@ public interface OrderMapper {
     Long findMenuUnitPriceById(Long menuId);
     
     void insertOrderItem(OrderItemDTO item);
+    
+    int countPendingForCafe(@Param("cafeId") Long cafeId);
+    
+    /** 유저+카페 기준, 주문 음료 총 개수(= OrderItem.count 합계) */
+    int sumDrinkCountByUserAndCafe(@Param("userId") Long userId,
+                                   @Param("cafeId") Long cafeId);
+
 
 }

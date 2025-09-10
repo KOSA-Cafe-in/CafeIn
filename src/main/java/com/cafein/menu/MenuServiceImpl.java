@@ -60,19 +60,19 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void deleteMenu(Long id) {
-        // 1) 먼저 메뉴 정보 조회해서 이미지 URL 확보
+        // 1) 이미지 URL 확보
         MenuDTO menu = menuMapper.findMenuById(id);
 
-        // 2) DB 삭제
-        menuMapper.deleteMenu(id);
+        // 2) DB 소프트 삭제
+        int rows = menuMapper.deleteMenu(id);
+        if (rows <= 0) return; // 해당 ID 없거나 이미 삭제 상태
 
-        // 3) 이미지가 있으면 S3에서도 삭제(베스트에포트)
+        // 3) S3 실제 삭제(베스트 에포트)
         if (menu != null && menu.getMenuPictureUrl() != null && !menu.getMenuPictureUrl().isEmpty()) {
             try {
-                // S3Uploader 가 URL을 받아 내부에서 key 추출 후 삭제함
-                s3Uploader.delete(menu.getMenuPictureUrl());
+                s3Uploader.delete(menu.getMenuPictureUrl()); // 파일 URL 넘기는 버전
             } catch (Exception e) {
-                // 이미지가 남아도 서비스 동작엔 영향 없게 로그만
+                // 이미지가 남아도 서비스엔 영향 없도록 로그만
                 System.err.println("S3 이미지 삭제 실패: " + e.getMessage());
             }
         }

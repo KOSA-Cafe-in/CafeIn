@@ -5,7 +5,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>로그인</title>
+  <title>로그인 - ${cafe.name}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff"/>
    <%@ include file="/WEB-INF/views/common/head.jsp" %>
@@ -20,6 +20,9 @@
         }
                         
         .cafe-name {
+        	display:flex;
+        	justify-content: center;
+        	flex: 1;
             font-size: 28px;
             font-weight: bold;
             color: #333;
@@ -80,9 +83,9 @@
     
         <!-- 로고 섹션 -->
         <div class="logo-section">
-           <img class="logo" src="${pageContext.request.contextPath}/resources/images/logo.png" alt="카페 로고">
+           <img class="logo" src="${cafe.logoUrl}" alt="카페 로고">
         </div>
-        <div class="cafe-name">카페 명</div>
+        <div class="cafe-name">${cafe.name}</div>
         
         <!-- 로그인 섹션 -->
         <div class="login-section">

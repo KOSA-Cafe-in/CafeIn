@@ -24,7 +24,6 @@
 
     <!-- 소개글 영역 -->
     <div class="cafe-intro">
-      <!-- 처음엔 비워두고 data-full 로만 전달 -->
       <p id="intro-text"
          data-full="${fn:escapeXml(cafeIntro)}"
          data-empty="연필을 눌러 소개글을 수정하세요:)"></p>
@@ -50,7 +49,6 @@
     <!-- 메뉴 리스트 -->
     <div class="menu-list">
       <c:forEach var="menu" items="${menuList}">
-        <!-- ✅ 카드 전체 클릭 가능 + 오른쪽 화살표 -->
         <div class="menu-item menu-clickable"
              onclick="location.href='${pageContext.request.contextPath}/admin/menu/${menu.menuId}/edit'">
           <img src="${menu.menuPictureUrl}" alt="${menu.name}" class="menu-img"/>
@@ -59,7 +57,7 @@
             <p>${menu.content}</p>
             <strong><fmt:formatNumber value="${menu.price}" type="number"/>원</strong>
           </div>
-          <div class="menu-arrow" aria-hidden="true">➡️</div>
+          <div class="menu-arrow" aria-hidden="true"><i class="fa-solid fa-angle-right"></i></div>
         </div>
       </c:forEach>
     </div>
@@ -78,8 +76,8 @@
   .cafe-intro { background: #f9f9f9; border-radius: 12px; padding: 12px; margin-bottom: 16px; position: relative; }
   #intro-text { font-size: 14px; margin: 0; white-space: pre-wrap; }
 
-  .intro-actions { margin-top: 6px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: nowrap; }
-  .icon-button { background: none; border: none; font-size: 14px; cursor: pointer; white-space: nowrap; }
+  .intro-actions { margin-top: 6px; display: flex; justify-content: flex-end; gap: 8px; }
+  .icon-button { background: none; border: none; font-size: 14px; cursor: pointer; }
 
   .menu-actions { text-align: right; margin-bottom: 16px; }
   .menu-add-btn { padding: 8px 16px; background: #2e6cff; color: #fff; text-decoration: none; border-radius: 8px; }
@@ -90,31 +88,34 @@
   .menu-info h3 { margin: 0; font-size: 16px; }
   .menu-info p { margin: 4px 0; font-size: 14px; color: #666; }
 
-  /* 1줄로 접기 */
-  .clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  .clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
-  /* textarea 고정 */
-  #intro-textarea {
-    width: 100%;
-    height: 84px;              /* 고정 높이 */
-    resize: none !important;   /* 크기 변경 방지 */
-    overflow: auto;
-    box-sizing: border-box;
-  }
+  #intro-textarea { width: 100%; height: 84px; resize: none !important; overflow: auto; box-sizing: border-box; }
   .intro-counter { font-size: 12px; color: #999; text-align: right; margin: 4px 0 8px; }
 
-  /* ✅ 메뉴 카드 클릭/화살표 스타일 추가 */
   .menu-clickable { cursor: pointer; position: relative; }
   .menu-arrow { margin-left: auto; align-self: center; font-size: 18px; opacity: .7; }
+
+  /* 헤더 오른쪽 아이콘에 붙는 뱃지 */
+  .appbar .right { position: relative; }
+  .order-badge{
+    position:absolute; top:-6px; right:-8px;
+    display:none;
+    min-width:18px; height:18px; padding:0 5px;
+    border-radius:999px;
+    background:#ef4444; color:#fff;
+    font-size:11px; font-weight:800;
+    line-height:18px; text-align:center;
+    box-shadow:0 2px 6px rgba(239,68,68,.35);
+    transform: translate(50%,-50%);
+  }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    var CTX = '<c:out value="${pageContext.request.contextPath}" />';
+
+    /* ===== 소개글 기존 로직 ===== */
     var p = document.getElementById('intro-text');
     var moreBtn = document.getElementById('btn-more');
     var editBtn = document.getElementById('btn-edit');
@@ -132,17 +133,12 @@
       p.textContent = show ? firstLine(full) : emptyText;
       p.classList.add('clamp-1');
 
-      // 필요 시 더보기 노출: 실제 높이 vs 한 줄 높이 비교
-      // 전체 높이 측정
-      var prev = p.textContent;
       p.classList.remove('clamp-1');
       p.textContent = full || '';
       var fullHeight = p.scrollHeight;
 
-      // 한 줄 높이 = 계산된 line-height
       var lh = parseFloat(window.getComputedStyle(p).lineHeight) || 20;
 
-      // 복귀 + 첫 줄 표시
       p.classList.add('clamp-1');
       p.textContent = show ? firstLine(full) : emptyText;
 
@@ -159,23 +155,19 @@
       moreBtn.setAttribute('data-expanded','1');
     }
 
-    // 초기 렌더(첫 줄만)
     renderCollapsed();
 
-    // 더보기/접기
     moreBtn.addEventListener('click', function(){
       var expanded = moreBtn.getAttribute('data-expanded') === '1';
       if (expanded) renderCollapsed(); else renderExpanded();
     });
 
-    // ✏️ 폼 토글
     editBtn.addEventListener('click', function(){
       var open = form.style.display === 'block';
       form.style.display = open ? 'none' : 'block';
       if (!open && ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
     });
 
-    // 글자수 카운터
     function updateCount(){
       if (!ta) return;
       if (ta.value.length > 3000) ta.value = ta.value.substring(0,3000);
@@ -184,7 +176,6 @@
     updateCount();
     ta.addEventListener('input', updateCount);
 
-    // AJAX 저장
     form.addEventListener('submit', function(e){
       e.preventDefault();
       var val = (ta.value || '').substring(0,3000);
@@ -199,15 +190,71 @@
       })
       .then(function(r){ return r.json(); })
       .then(function(json){
-        if (!json || !json.ok) throw new Error('저장 실패');
+        if (!json || !json.ok) { throw new Error('저장 실패'); }
         full = (json.content || '').trim();
-        renderCollapsed();            // 저장 후 접힌 상태로
-        form.style.display = 'none';  // 에디터 닫기
-      })['catch'](function(err){       // ← JSP 편집기의 .catch 오탐 방지
+        renderCollapsed();
+        form.style.display = 'none';
+      })['catch'](function(err){
         alert('저장 중 오류가 발생했습니다.');
-        console.error(err);
+        if (window.console) console.error(err);
       });
     });
+
+    /* ====== 주문내역 뱃지 폴링 ====== */
+    var rightBox = document.querySelector('.appbar .right');
+    var orderLink = rightBox ? rightBox.querySelector('a') : null;
+
+    var badge = document.createElement('span');
+    badge.id = 'order-badge';
+    badge.className = 'order-badge';
+    if (rightBox) rightBox.appendChild(badge);
+
+    function showBadge(n){
+      if (!badge) return;
+      if (n > 0) {
+        badge.textContent = (n > 99) ? '99+' : String(n);
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+        badge.textContent = '';
+      }
+    }
+
+    function pollBadge(){
+      fetch(CTX + '/admin/order/pendingCount', { headers: { 'Accept': 'application/json' }})
+        .then(function(r){ return r.json(); })
+        .then(function(j){ showBadge((j && typeof j.count === 'number') ? j.count : 0); })
+        ['catch'](function(){});
+    }
+
+    pollBadge();
+    var pollTimer = setInterval(pollBadge, 3000);
+
+    // 헤더의 "주문내역" 아이콘 클릭 시 리셋
+    if (orderLink) {
+      orderLink.addEventListener('click', function(){
+        try {
+          if (navigator && navigator.sendBeacon) {
+            navigator.sendBeacon(CTX + '/admin/order/markSeen', new Blob([], {type:'application/json'}));
+          } else {
+            fetch(CTX + '/admin/order/markSeen', { method: 'POST' });
+          }
+        } catch (_) {}
+        showBadge(0);
+      });
+    }
+
+    /* ✅ 하단 네비의 "주문" 탭도 동일 동작 */
+    // 1) href가 /order 인 링크를 /admin/orders 로 바꿔줌
+    var navOrderLink = document.querySelector('a[href="/order"], a[href$="/order"]');
+    if (navOrderLink) {
+      navOrderLink.setAttribute('href', CTX + '/admin/orders');
+      // 2) 클릭 시 뱃지 리셋 & markSeen
+      navOrderLink.addEventListener('click', function(){
+        try { fetch(CTX + '/admin/order/markSeen', { method: 'POST' }); } catch(_){}
+        showBadge(0);
+      });
+    }
   });
 </script>
 
