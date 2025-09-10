@@ -63,12 +63,6 @@
       padding: 0 24px;       /* 수정 폼(menu-add-wrap)의 좌우 패딩과 동일 */
     }
 
-    @media screen and (max-width: 480px) {
-      .form-top { flex-direction: column; align-items: flex-start; }
-      .submit-btn, .danger-btn { width: 100%; }
-      #deleteForm { padding: 0 24px; }
-    }
-
     .hint { font-size: 12px; color: #888; margin-top: 6px; }
   </style>
 </head>

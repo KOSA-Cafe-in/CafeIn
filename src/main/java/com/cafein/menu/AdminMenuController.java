@@ -138,15 +138,10 @@ public class AdminMenuController {
     // =========================
     @GetMapping(value = "/order/pendingCount", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public Map<String, Object> pendingCount(HttpSession session) {
-        // 세션 키: 카페별 lastSeen
-        final String key = "lastSeenOrderId:" + CAFE_ID;
-        Long lastSeen = (Long) session.getAttribute(key);
-
-        List<OrderDTO> all = orderService.findRecentOrdersForCafe(CAFE_ID);
-        long count = all.stream()
+    public Map<String, Object> pendingCount() {
+        long count = orderService.findRecentOrdersForCafe(CAFE_ID)
+                .stream()
                 .filter(o -> o != null && "N".equals(o.getStatus()))
-                .filter(o -> lastSeen == null || (o.getOrderId() != null && o.getOrderId() > lastSeen))
                 .count();
 
         Map<String, Object> res = new HashMap<>();

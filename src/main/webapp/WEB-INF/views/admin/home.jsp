@@ -115,7 +115,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     var CTX = '<c:out value="${pageContext.request.contextPath}" />';
 
-    /* ===== 소개글 기존 로직 ===== */
+    /* ===== 소개글 기존 로직 복원 ===== */
     var p = document.getElementById('intro-text');
     var moreBtn = document.getElementById('btn-more');
     var editBtn = document.getElementById('btn-edit');
@@ -132,16 +132,12 @@
       var show = full && full.length > 0;
       p.textContent = show ? firstLine(full) : emptyText;
       p.classList.add('clamp-1');
-
       p.classList.remove('clamp-1');
       p.textContent = full || '';
       var fullHeight = p.scrollHeight;
-
       var lh = parseFloat(window.getComputedStyle(p).lineHeight) || 20;
-
       p.classList.add('clamp-1');
       p.textContent = show ? firstLine(full) : emptyText;
-
       var needMore = show && fullHeight > lh * 1.2;
       moreBtn.style.display = needMore ? 'inline-block' : 'none';
       moreBtn.textContent = '더보기';
@@ -200,7 +196,7 @@
       });
     });
 
-    /* ====== 주문내역 뱃지 폴링 ====== */
+    /* ====== 주문내역 뱃지 폴링 + 신규! 힌트 ====== */
     var rightBox = document.querySelector('.appbar .right');
     var orderLink = rightBox ? rightBox.querySelector('a') : null;
 
@@ -220,43 +216,63 @@
       }
     }
 
+    function parseBadgeCount(){
+      if (!badge || badge.style.display === 'none') return 0;
+      var t = (badge.textContent || '').trim();
+      if (t === '') return 0;
+      if (t.indexOf('+') !== -1) t = t.replace('+','');
+      var num = parseInt(t,10);
+      return isNaN(num) ? 0 : num;
+    }
+
     function pollBadge(){
       fetch(CTX + '/admin/order/pendingCount', { headers: { 'Accept': 'application/json' }})
         .then(function(r){ return r.json(); })
-        .then(function(j){ showBadge((j && typeof j.count === 'number') ? j.count : 0); })
-        ['catch'](function(){});
+        .then(function(j){
+          var n = (j && typeof j.count === 'number') ? j.count : 0;
+          showBadge(n);
+        })['catch'](function(){});
     }
 
     pollBadge();
     var pollTimer = setInterval(pollBadge, 3000);
 
-    // 헤더의 "주문내역" 아이콘 클릭 시 리셋
-    if (orderLink) {
-      orderLink.addEventListener('click', function(){
+    function prepareNewHintAndGo(){
+      var current = parseBadgeCount();
+      var lastShown = 0;
+      try { lastShown = parseInt(sessionStorage.getItem('lastBadgeCountShown') || '0', 10) || 0; } catch(_){}
+      if (current > lastShown) {
         try {
-          if (navigator && navigator.sendBeacon) {
-            navigator.sendBeacon(CTX + '/admin/order/markSeen', new Blob([], {type:'application/json'}));
-          } else {
-            fetch(CTX + '/admin/order/markSeen', { method: 'POST' });
-          }
-        } catch (_) {}
-        showBadge(0);
+          sessionStorage.setItem('newPendingHint', String(current - lastShown));
+          sessionStorage.removeItem('newPendingShown');
+          sessionStorage.setItem('lastBadgeCountShown', String(current));
+        } catch(_){}
+      } else {
+        try {
+          sessionStorage.setItem('newPendingHint', '0');
+        } catch(_){}
+      }
+      window.location.href = CTX + '/admin/orders';
+    }
+
+    if (orderLink) {
+      orderLink.addEventListener('click', function(e){
+        e.preventDefault();
+        prepareNewHintAndGo();
       });
     }
 
-    /* ✅ 하단 네비의 "주문" 탭도 동일 동작 */
-    // 1) href가 /order 인 링크를 /admin/orders 로 바꿔줌
     var navOrderLink = document.querySelector('a[href="/order"], a[href$="/order"]');
     if (navOrderLink) {
       navOrderLink.setAttribute('href', CTX + '/admin/orders');
-      // 2) 클릭 시 뱃지 리셋 & markSeen
-      navOrderLink.addEventListener('click', function(){
-        try { fetch(CTX + '/admin/order/markSeen', { method: 'POST' }); } catch(_){}
-        showBadge(0);
+      navOrderLink.addEventListener('click', function(e){
+        e.preventDefault();
+        prepareNewHintAndGo();
       });
     }
   });
 </script>
+
 
 </body>
 </html>
