@@ -17,10 +17,12 @@
 	<div class="phone">
 
 		<!-- 헤더 include -->
-		<jsp:include page="/WEB-INF/views/common/header.jsp">
-			<jsp:param name="title" value="메뉴" />
-			<jsp:param name="showOrderHistory" value="true" />
-		</jsp:include>
+<jsp:include page="/WEB-INF/views/common/header.jsp">
+        	<jsp:param name="backLink" value="false" />
+            <jsp:param name="title" value="메뉴" />
+            <jsp:param name="showOrderHistory" value="false" />
+        </jsp:include>
+
 
 		<jsp:include page="/WEB-INF/views/common/cartBar.jsp" />
 

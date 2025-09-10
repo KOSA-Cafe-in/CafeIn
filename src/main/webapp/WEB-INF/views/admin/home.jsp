@@ -57,7 +57,7 @@
             <p>${menu.content}</p>
             <strong><fmt:formatNumber value="${menu.price}" type="number"/>원</strong>
           </div>
-          <div class="menu-arrow" aria-hidden="true">➡️</div>
+          <div class="menu-arrow" aria-hidden="true"><i class="fa-solid fa-angle-right"></i></div>
         </div>
       </c:forEach>
     </div>
