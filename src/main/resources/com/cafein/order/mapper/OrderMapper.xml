@@ -81,13 +81,6 @@
   WHERE m.menuId IN #{id}
 </select>
 
-  <!-- 메뉴 이름 조회 -->
-<select id="findMenuNameById" parameterType="String" resultType="String">
-  SELECT m.name    AS "name"
-  FROM Menu m
-  WHERE m.menuId IN #{id}
-</select>
-
 <!-- 단일 OrderItem insert -->
 <insert id="insertOrderItem" parameterType="com.cafein.order.OrderItemDTO">
   INSERT INTO ORDERITEM (

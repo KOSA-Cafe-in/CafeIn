@@ -91,6 +91,7 @@ public class PaymentController {
             	        // null 방지를 위해 qty 체크
             	        Long count = (it.getQty() != null) ? it.getQty().longValue() : 0L;
             	        dto.setCount(count);
+            	        dto.setMenuName(it.getMenuName());
             	        return dto;
             	    })
             	    .collect(Collectors.toList());

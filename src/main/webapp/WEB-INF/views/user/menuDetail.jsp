@@ -28,17 +28,31 @@
 	display: flex;
 	flex-direction: column
 }
-
-.md-hero {
-	width: 100%;
-	aspect-ratio: 16/10;
-	background: #f3f4f6;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(- -tc-muted);
-	font-size: 14px
+.md-content-wrapper {
+    flex: 1; /* 또는 flex-grow: 1; */
 }
+
+/* 히어로 이미지 영역: 높이 고정 + 가운데 정렬 */
+.md-hero{
+  width:100%;
+  height:350px;            /* 원하는 통일 규격 */
+  background:#f3f4f6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;         /* 안전장치 */
+}
+/* 카드 썸네일도 동일 규격(예: 정사각형 120px) */
+.menu-img{
+  width:120px;
+  height:120px;
+  object-fit:contain;      /* 썸네일까지 전체 보이게 */
+  object-position:center;
+  display:block;
+  background:#f3f4f6;      /* 여백 배경색 */
+  border-radius:8px;       /* 선택사항 */
+}
+
 
 .md-content {
 	padding: 16px
@@ -166,13 +180,11 @@
 	color: #fff;
 	border: none;
 	cursor: pointer;
-	/* iOS/모바일 기본 스타일 제거 */
-	-webkit-appearance: none;
-	appearance: none;
 	/* 우선순위 확보 */
 	background-color: #0064FF !important;
 	color: #fff !important;
 }
+
 
 #addBtn {
 	display: none; /* 처음에는 숨김 */
@@ -182,47 +194,64 @@
 	opacity: .5;
 	cursor: not-allowed;
 }
+
 </style>
 </head>
-<body>
 	<!-- 메뉴 정보는 data-* 속성으로 노출(스크립트에서 안전하게 참조) -->
+<body>
 	<div class="md-phone" id="page" data-menu-id="${menu.menuId}"
 		data-menu-name="${menu.name}" data-menu-price="${menu.price}">
-		<div style="position: relative">
-			<div class="md-hero">
-				<c:choose>
-					<c:when test="${not empty menu.menuPictureUrl}">
-						<img src="${menu.menuPictureUrl}" alt="${menu.name}"
-							style="width: 100%; height: 100%; object-fit: cover;" />
-					</c:when>
-					<c:otherwise>이미지 준비중</c:otherwise>
-				</c:choose>
+
+		<!-- ================================================== -->
+		<!-- 이 div를 추가하여 네비게이션을 제외한 모든 요소를 감쌉니다. -->
+		<div class="md-content-wrapper"> 
+			<div style="position: relative">
+				<div class="md-hero">
+					<c:choose>
+						<c:when test="${not empty menu.menuPictureUrl}">
+							<img src="${menu.menuPictureUrl}" alt="${menu.name}"
+								style="width: 100%; height: 100%; object-fit: cover;" />
+						</c:when>
+						<c:otherwise>이미지 준비중</c:otherwise>
+					</c:choose>
+				</div>
+				<button class="md-back" onclick="history.back()">←</button>
 			</div>
-			<button class="md-back" onclick="history.back()">←</button>
-		</div>
-
-		<div class="md-content">
-			<span class="md-category">메뉴</span>
-			<h1 class="md-title">${menu.name}</h1>
-			<p class="md-desc">${menu.content}</p>
-
-			<div class="md-row">
-				<span class="md-price"><fmt:formatNumber
-						value="${menu.price}" type="number" pattern="#,###" />원</span>
-				<div class="md-stepper">
-					<button type="button" onclick="changeQuantity(-1)">−</button>
-					<span class="count" id="quantity">0</span>
-					<button type="button" onclick="changeQuantity(1)">+</button>
+	
+			<div class="md-content">
+				<span class="md-category">메뉴</span>
+				<h1 class="md-title">${menu.name}</h1>
+				<p class="md-desc">${menu.content}</p>
+	
+				<div class="md-row">
+					<span class="md-price"><fmt:formatNumber
+							value="${menu.price}" type="number" pattern="#,###" />원</span>
+					<div class="md-stepper">
+						<button type="button" onclick="changeQuantity(-1)">−</button>
+						<span class="count" id="quantity">0</span>
+						<button type="button" onclick="changeQuantity(1)">+</button>
+					</div>
 				</div>
 			</div>
+			<div class="buttons">
+				<button type="button" class="btn btn-primary" id="addBtn"
+					onclick="addCurrent()">
+					<span class="badge" id="cartBadge">0</span> <span id="totalPrice"></span>
+				</button>
+			</div>
 		</div>
-		<div class="buttons">
-			<button type="button" class="btn btn-primary" id="addBtn"
-				onclick="addCurrent()">
-				<span class="badge" id="cartBadge">0</span> <span id="totalPrice"></span>
-			</button>
-		</div>
+		<!-- ================================================== -->
+		
+		<!-- 하단 네비게이션 include -->
+		<jsp:include page="/WEB-INF/views/common/nav.jsp">
+			<jsp:param name="active" value="home" />
+		</jsp:include>
 	</div>
+	
+	<!-- ... 스크립트 ... -->
+</body>
+	
+	
 
 	<script>
 	  function changeQuantity(delta){
@@ -264,5 +293,4 @@
 		}
 	
 	</script>
-</body>
 </html>
