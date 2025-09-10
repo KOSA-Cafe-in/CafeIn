@@ -2,6 +2,8 @@ package com.cafein.menu;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +20,11 @@ public class UserMenuController {
 
 	@GetMapping("/")
 	public String root() {
-		return "redirect:/user/home";
+		return "redirect:/home";
 	}
 
 	@GetMapping("/user/home")
-	public String menu(Model model) {
+	public String menu(Model model){
 		List<MenuDTO> menuList = menuService.getAllMenus();
 		model.addAttribute("menuList", menuList);
 		return "user/home";

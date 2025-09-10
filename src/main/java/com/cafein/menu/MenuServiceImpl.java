@@ -23,7 +23,7 @@ public class MenuServiceImpl implements MenuService {
     }
     @Override
     public MenuDTO getMenuById(Long menuId) {
-        return menuMapper.findById(menuId);
+        return menuMapper.findMenuById(menuId);
     }
     
     @Override

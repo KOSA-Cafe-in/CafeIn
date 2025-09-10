@@ -12,7 +12,7 @@ public interface OrderService {
     int markDone(Long orderId);
     
     OrderDTO createOrder(PaymentDTO paymentDTO, String orderType, String couponUse,  Long userCafeId, List<OrderItemDTO> items);
-   
+
     int countPendingForCafe(Long cafeId);
     
     int sumDrinkCountByUserAndCafe(Long userId, Long cafeId);

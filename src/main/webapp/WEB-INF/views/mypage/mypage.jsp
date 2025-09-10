@@ -119,29 +119,31 @@
         <hr/>
         <div class="divider"></div>
 
-        <!-- ✅ 스탬프 영역 -->
-        <section class="stamp-wrap">
-          <!-- 컨트롤러에서 내려준 값 사용: stampCount(0~9), couponCount(정수) -->
-          <c:set var="filled" value="${empty stampCount ? 0 : stampCount}" />
-          <c:set var="coupons" value="${empty couponCount ? 0 : couponCount}" />
-
-          <div class="stamp-title">
-            스탬프 <span style="color:var(--muted); font-weight:600;">(<c:out value='${filled}'/>/10)</span>
-          </div>
-
-          <div class="card">
-            <div class="grid">
-              <c:forEach begin="1" end="10" var="i">
-                <div class="stamp ${i <= filled ? 'filled' : ''}">
-                  <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="stamp"/>
-                </div>
-              </c:forEach>
-            </div>
-          </div>
-
-          <!-- ✅ 스탬프 영역 아래, 오른쪽 정렬, 검정색 -->
-          <div class="coupon-info">쿠폰 총 갯수: <strong><c:out value='${coupons}'/></strong>개</div>
-        </section>
+        <!-- ✅ 스탬프 영역 (CUSTOMER만 표시) -->
+        <c:if test="${userCafe.role eq 'CUSTOMER'}">
+	        <section class="stamp-wrap">
+	          <!-- 컨트롤러에서 내려준 값 사용: stampCount(0~9), couponCount(정수) -->
+	          <c:set var="filled" value="${empty stampCount ? 0 : stampCount}" />
+	          <c:set var="coupons" value="${empty couponCount ? 0 : couponCount}" />
+	
+	          <div class="stamp-title">
+	            스탬프 <span style="color:var(--muted); font-weight:600;">(<c:out value='${filled}'/>/10)</span>
+	          </div>
+	
+	          <div class="card">
+	            <div class="grid">
+	              <c:forEach begin="1" end="10" var="i">
+	                <div class="stamp ${i <= filled ? 'filled' : ''}">
+	                  <img src="${pageContext.request.contextPath}/resources/images/logo.png" alt="stamp"/>
+	                </div>
+	              </c:forEach>
+	            </div>
+	          </div>
+	
+	          <!-- ✅ 스탬프 영역 아래, 오른쪽 정렬, 검정색 -->
+	          <div class="coupon-info">쿠폰 총 갯수: <strong><c:out value='${coupons}'/></strong>개</div>
+	        </section>
+        </c:if>
       </section>
 
       <!-- 로그아웃 버튼 -->

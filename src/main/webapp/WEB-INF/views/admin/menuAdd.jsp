@@ -110,17 +110,6 @@
       width: 100%;
       cursor: pointer;
     }
-
-    @media screen and (max-width: 480px) {
-      .form-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .submit-btn {
-        width: 80%;
-      }
-    }
   </style>
 </head>
 <body>

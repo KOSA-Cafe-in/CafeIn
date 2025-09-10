@@ -11,7 +11,6 @@ public interface MenuMapper {
 
     // (선택) 기존에 쓰던 메서드들 유지
     List<MenuDTO> findAll();
-    MenuDTO findById(Long menuId);
 
     // 실제 서비스에서 사용 중인 메서드들
     void createMenu(MenuDTO dto);
