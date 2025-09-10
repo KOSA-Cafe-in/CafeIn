@@ -40,6 +40,10 @@
     .takeout { color:#2e6cff; font-weight:700; margin-right:6px; }
     .mute { color:#9a9a9a; font-size:12px; }
 
+<<<<<<< HEAD
+=======
+    /* ✅ 신규 표시 배지 (오른쪽 아래) */
+>>>>>>> stash
     .badge-new {
       position:absolute; right:14px; bottom:8px;
       background:#ef4444; color:#fff;
@@ -84,6 +88,10 @@
                 <div class="price"><fmt:formatNumber value="${it.unitPrice * it.count}" type="number"/>원</div>
               </div>
             </c:forEach>
+<<<<<<< HEAD
+=======
+
+>>>>>>> stash
             <button class="circle-btn js-done" data-id="${o.orderId}">완료</button>
           </div>
         </c:if>
@@ -138,6 +146,7 @@
   }
   setCounts();
 
+  // ✅ 더 이상 여기에서 clearNewBadges()를 호출하지 않습니다.
   tabPending.addEventListener('click', function () {
     tabPending.classList.add('active'); tabDone.classList.remove('active');
     panelPending.classList.remove('hidden'); panelDone.classList.add('hidden');
@@ -204,10 +213,15 @@
         setCounts();
       }
     })['catch'](function (err) {
+<<<<<<< HEAD
+=======
+      alert('상태 변경 중 오류가 발생했습니다.');
+>>>>>>> stash
       if (window.console) console.error(err);
     });
   });
 
+<<<<<<< HEAD
   // 폴링 (동일)
   function pollOrdersDOM(){
     fetch(CTX + '/admin/orders', { headers: { 'X-Requested-With':'fetch' }})
@@ -255,6 +269,77 @@
     document.querySelectorAll('.badge-new').forEach(function(el){ el.remove(); });
     // sessionStorage.removeItem('newPendingShown');  // ← 삭제하지 않음!
   });
+=======
+  /* ============================
+     신규/상태 변경 폴링 (DOM 머지)
+  ============================ */
+  function pollOrdersDOM(){
+    fetch(CTX + '/admin/orders', { headers: { 'X-Requested-With':'fetch' }})
+      .then(function(r){ return r.text(); })
+      .then(function(html){
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+
+        var newPendingCards = doc.querySelectorAll('#panel-pending .order-card');
+        var newDoneCards    = doc.querySelectorAll('#panel-done .order-card');
+
+        var newPendingIds = {};
+        newPendingCards.forEach(function(c){ newPendingIds[c.id] = c; });
+
+        var newDoneIds = {};
+        newDoneCards.forEach(function(c){ newDoneIds[c.id] = c; });
+
+        // 1) 신규·처리중: 새 카드 추가 + '신규!'
+        newPendingCards.forEach(function(card){
+          var id = card.id;
+          if (!document.getElementById(id)) {
+            var imported = document.importNode(card, true);
+            var badge = document.createElement('span');
+            badge.className = 'badge-new';
+            badge.textContent = '신규!';
+            imported.appendChild(badge);
+            panelPending.insertBefore(imported, panelPending.firstChild);
+          }
+        });
+
+        // 2) 다른 곳에서 완료로 바뀐 건 이동
+        Array.prototype.slice.call(panelPending.querySelectorAll('.order-card')).forEach(function(cur){
+          var id = cur.id;
+          if (!newPendingIds[id] && newDoneIds[id]) {
+            var importedDone = document.importNode(newDoneIds[id], true);
+            panelDone.insertBefore(importedDone, panelDone.firstChild);
+            cur.parentNode.removeChild(cur);
+          }
+        });
+
+        // 3) 완료 탭 새 카드 추가
+        newDoneCards.forEach(function(card){
+          var id = card.id;
+          if (!document.getElementById(id)) {
+            var imported = document.importNode(card, true);
+            panelDone.insertBefore(imported, panelDone.firstChild);
+          }
+        });
+
+        setCounts();
+      })['catch'](function(e){
+        // 네트워크 오류는 조용히 무시
+      });
+  }
+  var _pollTimer = setInterval(pollOrdersDOM, 3000);
+
+  // '신규!' 배지 제거 — 페이지 이탈 시에만 제거
+  function clearNewBadges(){
+    var list = document.querySelectorAll('.badge-new');
+    for (var i=0;i<list.length;i++) list[i].parentNode.removeChild(list[i]);
+  }
+  window.addEventListener('beforeunload', clearNewBadges);
+
+  // 페이지 진입 시 '본 것으로 처리' (헤더 뱃지 초기화용)
+  (function markSeenOnEnter(){
+    try { fetch(CTX + '/admin/order/markSeen', { method: 'POST' }); } catch(e) {}
+  })();
+>>>>>>> stash
 </script>
 </body>
 </html>

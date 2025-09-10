@@ -33,14 +33,15 @@ public class AdminMenuController {
     @Resource
     private OrderService orderService;
 
-    private static final Long CAFE_ID = 1L;
-
     // =========================
     // 홈 = 메뉴판 (/admin/home)
     // =========================
     @GetMapping("/home")
-    public String showHome(Model model) {
-        String cafeIntro = cafeService.findIntro(CAFE_ID);
+    public String showHome(Model model, HttpSession session) {
+        // 관리자 권한 체크
+        Long cafeId = (Long) session.getAttribute("cafeId");
+        
+        String cafeIntro = cafeService.findIntro(cafeId);
         model.addAttribute("cafeIntro", cafeIntro);
 
         List<MenuDTO> menuList = menuService.findAll();
@@ -54,8 +55,9 @@ public class AdminMenuController {
     // =========================
     @PostMapping(value = "/home/updateIntro", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public Map<String, Object> updateIntroAjax(@RequestParam("content") String content) {
-        cafeService.updateIntro(CAFE_ID, content);
+    public Map<String, Object> updateIntroAjax(@RequestParam("content") String content, HttpSession session) {
+        Long cafeId = (Long) session.getAttribute("cafeId");
+        cafeService.updateIntro(cafeId, content);
         Map<String, Object> res = new HashMap<>();
         res.put("ok", true);
         res.put("content", content);
@@ -114,8 +116,9 @@ public class AdminMenuController {
     // 주문내역 화면
     // =========================
     @GetMapping("/orders")
-    public String showOrders(Model model) {
-        model.addAttribute("orders", orderService.findRecentOrdersForCafe(CAFE_ID));
+    public String showOrders(Model model, HttpSession session) {
+        Long cafeId = (Long) session.getAttribute("cafeId");
+        model.addAttribute("orders", orderService.findRecentOrdersForCafe(cafeId));
         return "admin/AdminOrderDetail";
     }
 
@@ -138,10 +141,16 @@ public class AdminMenuController {
     // =========================
     @GetMapping(value = "/order/pendingCount", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public Map<String, Object> pendingCount() {
-        long count = orderService.findRecentOrdersForCafe(CAFE_ID)
-                .stream()
+    public Map<String, Object> pendingCount(HttpSession session) {
+        // 세션 키: 카페별 lastSeen
+        Long cafeId = (Long) session.getAttribute("cafeId");
+        final String key = "lastSeenOrderId:" + cafeId;
+        Long lastSeen = (Long) session.getAttribute(key);
+
+        List<OrderDTO> all = orderService.findRecentOrdersForCafe(cafeId);
+        long count = all.stream()
                 .filter(o -> o != null && "N".equals(o.getStatus()))
+                .filter(o -> lastSeen == null || (o.getOrderId() != null && o.getOrderId() > lastSeen))
                 .count();
 
         Map<String, Object> res = new HashMap<>();
@@ -156,9 +165,10 @@ public class AdminMenuController {
     @PostMapping(value = "/order/markSeen", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public Map<String, Object> markSeen(HttpSession session) {
-        final String key = "lastSeenOrderId:" + CAFE_ID;
+        Long cafeId = (Long) session.getAttribute("cafeId");
+        final String key = "lastSeenOrderId:" + cafeId;
 
-        List<OrderDTO> all = orderService.findRecentOrdersForCafe(CAFE_ID);
+        List<OrderDTO> all = orderService.findRecentOrdersForCafe(cafeId);
         Long maxId = all.stream()
                 .filter(Objects::nonNull)
                 .map(OrderDTO::getOrderId)
