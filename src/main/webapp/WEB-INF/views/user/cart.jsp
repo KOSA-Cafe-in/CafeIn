@@ -77,7 +77,7 @@
         <div><span class="opt-title">포장하기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
-      <label class="option ${orderType eq 'N' ? 'active' : ''}" data-type="N">
+		<label class="option ${orderType eq 'N' or empty orderType ? 'active' : ''}" data-type="N">
         <div><span class="opt-title">먹고가기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
@@ -96,7 +96,7 @@
   <!-- 하단 버튼 -->
 <div class="buttons">
   <form id="checkoutForm" action="<c:url value='/payment/checkout'/>" method="post">
-    <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'Y'}"/>
+    <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'N'}"/>
     <input type="hidden" name="couponApplied" id="couponAppliedInput" value="${couponApplied ? 'Y' : 'N'}"/>
     <input type="hidden" name="cart" id="cartJson"/>
     <button class="btn btn-primary" type="submit" id="orderBtn">

@@ -250,5 +250,8 @@
     <jsp:param name="active" value="cart" />
   </jsp:include>
     </main>
+    <script>
+    localStorage.removeItem("cart:v1");
+    </script>
 </body>
 </html>

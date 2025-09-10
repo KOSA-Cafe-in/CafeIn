@@ -223,11 +223,14 @@ html, body{
       cartItems.forEach(function(item){
         var itemTotal = (item.price || 0) * (item.qty || 0);
         totalAmount += itemTotal;
-        html += '<li>' + item.name + ' x ' + item.qty + '개 - ' + itemTotal.toLocaleString() + '원</li>';
+        html += '<li>' + item.name + ' x ' + item.qty + '개  : ' + itemTotal.toLocaleString() + '원</li>';
       });
-      console.log(totalAmount);
+      if(couponApplied == 'Y') html += '<p>-2000원(할인 적용)</p>'
+      var pay = '<p><strong>총 결제금액: ' + totalAmount.toLocaleString() + '원</strong></p>';
+      if(couponApplied == 'Y') {totalAmount -= 2000;
+      pay = '<p><strong>총 결제금액: ' + totalAmount.toLocaleString() + '원(쿠폰 적용)</strong></p>'; }
       html += '</ul>';
-      html += '<p><strong>총 결제금액: ' + totalAmount.toLocaleString() + '원</strong></p>';
+      html += pay;
       document.getElementById('orderSummary').innerHTML = html;
     } catch (e) {
       console.error(e);
@@ -241,6 +244,8 @@ html, body{
     var totalAmount = cartItems.reduce(function(sum, item){
       return sum + ((item.price || 0) * (item.qty || 0));
     }, 0);
+    if(couponApplied == 'Y') {totalAmount -= 2000;}
+    console.log('최종 결제 금액 테스트' + totalAmount);
 
     var productName = '';
     if (cartItems.length > 0) {
@@ -277,6 +282,7 @@ html, body{
             items: cartItems.map(it => ({
                 menuId: it.menuId,   // 장바구니에 menuId가 있어야 함
                 qty: it.qty,
+                menuName: it.name
                 // unitPrice: it.price // 서버에서 다시 조회할 것(보안성)
               }))
           }),
