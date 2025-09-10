@@ -45,5 +45,64 @@
        SET status = 'Y'
      WHERE orderId = #{orderId}
   </update>
+  
+  <!-- Orders 테이블 insert -->
+<insert id="insertOrder" parameterType="com.cafein.order.OrderDTO" useGeneratedKeys="false">
+  <!-- 먼저 시퀀스 NEXTVAL을 가져와 orderId 프로퍼티에 세팅 -->
+  <selectKey keyProperty="orderId" resultType="long" order="BEFORE">
+    SELECT ORDERS_SEQ.NEXTVAL FROM dual
+  </selectKey>
+
+  INSERT INTO ORDERS (
+    ORDERID,
+    USERCafeID,
+    PAYMENTMETHOD,
+    TOTALPRICE,
+    CREATEDDATE,
+    STATUS,
+    TAKEOUT,
+    COUPONUSE
+  ) VALUES (
+    #{orderId},                  <!-- 위에서 세팅된 값 -->
+    #{userCafeId,jdbcType=NUMERIC},
+    #{paymentMethod},
+    #{totalPrice},
+    #{createdDate},
+    #{status},
+    #{takeout},
+    #{couponUse}
+  )
+</insert>
+
+  <!-- 메뉴 단가 조회 -->
+<select id="findMenuUnitPriceById" parameterType="Long" resultType="Long">
+  SELECT m.price    AS "price"
+  FROM Menu m
+  WHERE m.menuId IN #{id}
+</select>
+
+  <!-- 메뉴 이름 조회 -->
+<select id="findMenuNameById" parameterType="String" resultType="String">
+  SELECT m.name    AS "name"
+  FROM Menu m
+  WHERE m.menuId IN #{id}
+</select>
+
+<!-- 단일 OrderItem insert -->
+<insert id="insertOrderItem" parameterType="com.cafein.order.OrderItemDTO">
+  INSERT INTO ORDERITEM (
+    ORDERITEMID,
+    ORDERID,
+    MENUID,
+    COUNT,
+    UNITPRICE
+  ) VALUES (
+    ORDERITEM_SEQ.NEXTVAL,
+    #{orderId,jdbcType=NUMERIC},   <!-- OrderDTO에서 세팅된 orderId 사용 -->
+    #{menuId,jdbcType=NUMERIC},
+    #{count,jdbcType=NUMERIC},
+    #{unitPrice, jdbcType=NUMERIC}
+  )
+</insert>
 
 </mapper>
