@@ -16,19 +16,42 @@
 	
 	<!-- 카카오 OAuth2 서비스 Bean -->
     <bean id="kakaoOAuth2Service" class="com.cafein.security.KakaoOAuth2Service" />
+    
+    <!-- 접근 거부 핸들러 Bean -->
+    <bean id="customAccessDeniedHandler" class="com.cafein.security.CustomAccessDeniedHandler" />
 
 	<security:http>
-		<!-- 로그인 페이지와 카카오 관련 URL 허용 -->
+		<!-- 로그인 페이지 - cafeId 파라미터 체크는 Controller에서 처리 -->
 	    <security:intercept-url pattern="/login" access="permitAll" />
 	    <security:intercept-url pattern="/kakao/**" access="permitAll" />
-    	<security:intercept-url pattern="/resources/**" access="permitAll" />    
+    	<security:intercept-url pattern="/resources/**" access="permitAll" />
+    	
+    	<!-- 에러 페이지 허용 -->
+    	<security:intercept-url pattern="/error/**" access="permitAll" />
+    	
+    	<!-- 홈 경로 허용 (역할별 분기 처리용) -->
+	    <security:intercept-url pattern="/home" access="permitAll" />
+	    <security:intercept-url pattern="/" access="permitAll" />
+	    <security:intercept-url pattern="/logout" access="permitAll" />
 		
-		<!-- 권한이 필요한 페이지 -->
-		<security:intercept-url pattern="/user/**"	access="hasRole('ROLE_CUSTOMER')" />
+		<!-- 관리자 전용 영역 -->
 		<security:intercept-url pattern="/admin/**" access="hasRole('ROLE_MANAGER')" />
 		
-		<!-- API 허용 -->
-		<security:intercept-url pattern="/api/auth/**" access="permitAll" />
+		<!-- 고객 전용 영역 -->
+		<security:intercept-url pattern="/user/**" access="hasRole('ROLE_CUSTOMER')" />
+		<security:intercept-url pattern="/payment/**" access="hasRole('ROLE_CUSTOMER')" />
+		<security:intercept-url pattern="/menu/**" access="hasRole('ROLE_CUSTOMER')" />
+		
+		<!-- 공통 영역 (로그인 필요) -->
+		<security:intercept-url pattern="/mypage/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/board/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/**" access="isAuthenticated()" />
+		
+		<!-- 기타 모든 경로는 로그인 필요 -->
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
+		
+		<!-- 접근 거부 시 홈으로 리다이렉트 -->
+		<security:access-denied-handler ref="customAccessDeniedHandler" />
 		
 		<!-- 기본 로그인 폼 비활성화 (카카오만 사용) -->
 		<security:form-login login-page="/login" />

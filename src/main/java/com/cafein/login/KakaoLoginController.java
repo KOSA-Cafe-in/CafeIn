@@ -68,7 +68,7 @@ public class KakaoLoginController {
 	        
 	        UserDTO user = userService.processLogin("KAKAO", socialId, nickname, email, cafeId);
 	        
-	        // role에 따른 redirect 처리
+	        // DB에서 사용자 역할 조회
 	        UserCafeDTO userCafe = userCafeService.findUserCafeByUserAndCafe(user.getUserId(), cafeId);
 	        
 	        // 세션에 필요한 정보만 저장
@@ -78,12 +78,14 @@ public class KakaoLoginController {
 			session.setAttribute("role", userCafe.getRole());           // "MANAGER" - 비즈니스 로직용
 			session.setAttribute("cafeId", cafeId);
 			
-			// Spring Security 컨텍스트에 권한 설정
+			// Spring Security 형식으로 변환
 			String role = "ROLE_" + userCafe.getRole();
+
+			// Spring Security 컨텍스트에 권한 정보 저장
 			Authentication auth = new UsernamePasswordAuthenticationToken(
-			    userCafe.getUserCafeId().toString(),
-			    null,
-			    Arrays.asList(new SimpleGrantedAuthority(role))
+			    userCafe.getUserCafeId().toString(),	// Principal (사용자 식별자)
+			    null,									// Credentials (비밀번호, 여기서는 null)
+			    Arrays.asList(new SimpleGrantedAuthority(role))		// Authorities (권한 목록)
 			);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 			System.out.println("Spring Security 권한 설정 완료: " + role);
@@ -93,11 +95,11 @@ public class KakaoLoginController {
 	        	return "redirect:/admin/home";
 	        }	        
 			
-			// 로그인 처리 후 손님이면 메인 페이지로 이동
-			return "redirect:/home";
+			// 로그인 처리 후 손님이면 사용자 홈 페이지로 이동
+			return "redirect:/user/home";
 		} catch(Exception e) {
 			e.printStackTrace();
-			return "redirect:/login?error=kakao";
+			return "redirect:/error/error";
 		}
 	}
 }
