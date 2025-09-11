@@ -9,14 +9,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.cafein.cafe.CafeService;
+import com.cafein.stamp.StampDTO;
+import com.cafein.stamp.StampService;
 
 @Controller
 public class UserMenuController {
 	
 	@Autowired
 	private MenuService menuService;
+	
+	@Autowired
+	private CafeService cafeService;
+	
+	@Autowired
+	private StampService stampService;
 
 	@GetMapping("/")
 	public String root() {
@@ -24,9 +32,13 @@ public class UserMenuController {
 	}
 
 	@GetMapping("/user/home")
-	public String menu(Model model){
+	public String menu(Model model, HttpSession session){
+		long cafeId = (Long) session.getAttribute("cafeId");
 		List<MenuDTO> menuList = menuService.getAllMenus();
+		String content = cafeService.findIntro(cafeId);
+		
 		model.addAttribute("menuList", menuList);
+		model.addAttribute("content", content);
 		return "user/home";
 	}
 
@@ -37,8 +49,12 @@ public class UserMenuController {
 		return "user/menuDetail";
 	}
 	
-	@RequestMapping(value = "/user/cart", method = RequestMethod.GET)
-	public String cart() {
+	@GetMapping("/user/cart")
+	public String cart(HttpSession session, Model model) {
+		long userCafeId = (Long) session.getAttribute("userCafeId");
+		StampDTO stamp = stampService.findStampByUserCafeId(userCafeId);
+		
+		model.addAttribute("stamp", stamp);
 	    return "user/cart";  // cart.jsp로 이동
 	}
 }

@@ -55,7 +55,7 @@
 
 
 .md-content {
-	padding: 16px
+	padding: 16px 16px 100px 16px /* 하단 패딩은 새로 추가된 CSS에서 처리 */
 }
 
 .md-title {
@@ -188,11 +188,30 @@
 
 #addBtn {
 	display: none; /* 처음에는 숨김 */
+	transform: translateY(100%); /* 아래쪽에서 시작 */
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#addBtn.show {
+	display: flex !important;
+	transform: translateY(0); /* 원래 위치로 */
 }
 
 .btn-primary:disabled {
 	opacity: .5;
 	cursor: not-allowed;
+}
+
+/* 하단 고정 버튼 영역 */
+.buttons {
+	position: fixed;
+	bottom: 70px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 100%;
+	max-width: 400px;
+	background: none;
+	z-index: 1000;
 }
 
 </style>
@@ -274,8 +293,13 @@
 	      if (plus)  plus.disabled  = (qty >= 99);
 	    }
 	    const addBtn = document.getElementById('addBtn');
-	    if(qty != 0) addBtn.style.display = 'flex'; // 원래 flex 레이아웃이니까
-	    else addBtn.style.display = 'none';
+	    if(qty != 0) {
+	    	addBtn.style.display = 'flex'; // 먼저 표시
+	    	setTimeout(() => addBtn.classList.add('show'), 10); // 약간의 지연 후 애니메이션
+	    } else {
+	    	addBtn.classList.remove('show');
+	    	setTimeout(() => addBtn.style.display = 'none', 300); // 애니메이션 완료 후 숨김
+	    }
 	  }
 
 	  function addCurrent(){

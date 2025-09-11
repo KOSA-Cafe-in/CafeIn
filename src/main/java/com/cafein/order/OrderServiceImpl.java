@@ -85,4 +85,9 @@ public class OrderServiceImpl implements OrderService {
 	public int sumDrinkCountByUserAndCafe(Long userId, Long cafeId) {
 		return orderMapper.sumDrinkCountByUserAndCafe(userId, cafeId);
 	}
+	
+	@Override
+	public int sumOrderItemCountByOrderId(long orderId){
+		return orderMapper.sumOrderItemCountByOrderId(orderId);
+	}
 }

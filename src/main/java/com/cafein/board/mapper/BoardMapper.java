@@ -17,4 +17,8 @@ public interface BoardMapper {
 	void createBoard(BoardDTO board);
 	void updateBoard(BoardDTO board);
 	void deleteBoard(@Param("boardId") Long boardId);
+	
+	// 페이지네이션을 위한 페이징 메서드
+	List<BoardWithUserDTO> findBoardListWithPaging(@Param("cafeId") Long cafeId, @Param("offset") int offset, @Param("size") int size);
+	int getTotalBoardCount(@Param("cafeId") Long cafeId);
 }

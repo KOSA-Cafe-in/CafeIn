@@ -77,4 +77,15 @@ public class BoardServiceImpl implements BoardService{
 			}
 		}
 	}
+	
+	@Override
+	public List<BoardWithUserDTO> findBoardListWithPaging(Long cafeId, int page, int size) {
+		int offset = page * size;
+		return boardMapper.findBoardListWithPaging(cafeId, offset, size);
+	}
+	
+	@Override
+	public int getTotalBoardCount(Long cafeId) {
+		return boardMapper.getTotalBoardCount(cafeId);
+	}
 }

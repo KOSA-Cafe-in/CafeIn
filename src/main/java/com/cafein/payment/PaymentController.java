@@ -24,6 +24,7 @@ import com.cafein.order.OrderDTO;
 import com.cafein.order.OrderInfoDTO;
 import com.cafein.order.OrderItemDTO;
 import com.cafein.order.OrderService;
+import com.cafein.stamp.StampService;
 @Controller
 @RequestMapping("/payment")
 public class PaymentController {
@@ -33,6 +34,9 @@ public class PaymentController {
     
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private StampService stampService;
 
     @Value("${portone.imp.code}")
     private String portoneImpCode;
@@ -169,11 +173,20 @@ public class PaymentController {
     // 결제 성공 페이지
     @GetMapping("/success")
     public String success(HttpSession session, Model model) {
+    	long userCafeId = (long) session.getAttribute("userCafeId");
         PaymentDTO payment = (PaymentDTO) session.getAttribute("lastPayment");
         OrderDTO order = (OrderDTO) session.getAttribute("lastOrder");
         if (payment == null || order == null) {
             return "redirect:/"; // 새로고침 등으로 세션이 비었을 때 대비
         }
+        int orderItemCount = orderService.sumOrderItemCountByOrderId(order.getOrderId());
+        
+        if(order.getCouponUse().equals("Y")) {
+        	stampService.minusStampCountByUserCafeId(userCafeId);
+        }
+        
+        stampService.updateStampCountByUserCafeId(userCafeId, orderItemCount);        
+        
         model.addAttribute("payment", payment);
         model.addAttribute("order", order);
 

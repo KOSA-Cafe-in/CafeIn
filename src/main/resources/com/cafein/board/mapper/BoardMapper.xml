@@ -96,4 +96,30 @@
 	  DELETE FROM Board
 	  WHERE boardId = #{boardId}  
 	</delete>
+	
+	<!-- 무한스크롤을 위한 페이징 조회 -->
+	<select id="findBoardListWithPaging" resultType="com.cafein.board.BoardWithUserDTO">
+		SELECT 
+			b.boardId, 
+			b.cafeId, 
+			b.userId, 
+			b.title, 
+			b.content, 
+			b.pictureUrl AS boardPictureUrl, 
+			b.createdDate, 
+			b.modifiedDate,
+			u.nickname
+		FROM Board b
+		INNER JOIN Users u ON b.userId = u.userId
+		WHERE b.cafeId = #{cafeId} 
+		ORDER BY b.boardId DESC
+		OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<!-- 특정 카페의 전체 게시글 수 조회 -->
+	<select id="getTotalBoardCount" resultType="int" parameterType="long">
+		SELECT COUNT(*)
+		FROM Board 
+		WHERE cafeId = #{cafeId}
+	</select>
  </mapper> 

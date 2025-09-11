@@ -116,7 +116,6 @@
           </div>
         </div>
 
-        <hr/>
         <div class="divider"></div>
 
         <!-- ✅ 스탬프 영역 (CUSTOMER만 표시) -->

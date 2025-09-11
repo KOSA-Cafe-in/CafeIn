@@ -17,7 +17,6 @@
 	<div class="phone">
 		<!-- 헤더 include -->
 		<jsp:include page="/WEB-INF/views/common/header.jsp">
-			<jsp:param name="backLink" value="false" />
 			<jsp:param name="title" value="메뉴" />
 			<jsp:param name="showOrderHistory" value="false" />
 		</jsp:include>
@@ -29,8 +28,10 @@
 		<main class="content"> <!-- 공지 -->
 		<section class="notice" aria-label="가게 공지">
 			<span class="icon">🔔</span>
-			<div class="msg">1인당 1메뉴 부탁드려요 :)</div>
-			<span class="chev">▾</span>
+			<div class="msg collapsed" id="noticeMsg">${content}</div>
+			<div class="intro-actions">
+		      <button id="btn-more" class="icon-button" onclick="toggleNotice()"><i class="fa-solid fa-angle-down"></i></button>
+		    </div>
 		</section>
 
 		<!-- 메뉴 목록 -->
@@ -151,12 +152,26 @@
 	font-size: 14px;
 	color: #666;
 }
-
 .clamp-1 {
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+
+.notice .msg {
+	transition: all 0.3s ease;
+}
+
+.notice .msg.collapsed {
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.notice .msg.expanded {
+	display: block;
 }
 
 #intro-textarea {
@@ -194,10 +209,48 @@
         window.location.href = '/menu/detail/' + menuId;
       }
     }
+    
     // 장바구니에 담기 함수 (+ 버튼 클릭 시)
     function addToCart(menuId) {
       alert('장바구니에 담겼습니다. (메뉴 ID: ' + menuId + ')');
     }
+    
+    // 공지사항 더보기/접기 토글 함수
+    function toggleNotice() {
+      const noticeMsg = document.getElementById('noticeMsg');
+      const btnMore = document.getElementById('btn-more');
+      
+      if (noticeMsg.classList.contains('collapsed')) {
+        // 펼치기
+        noticeMsg.classList.remove('collapsed');
+        noticeMsg.classList.add('expanded');
+        btnMore.innerHTML = '<i class="fa-solid fa-angle-up"></i>';
+      } else {
+        // 접기
+        noticeMsg.classList.remove('expanded');
+        noticeMsg.classList.add('collapsed');
+        btnMore.innerHTML = '<i class="fa-solid fa-angle-down"></i>';
+      }
+    }
+    
+    // 페이지 로드 시 공지사항이 1줄을 넘는지 확인하고 더보기 버튼 표시 여부 결정
+    document.addEventListener('DOMContentLoaded', function() {
+      const noticeMsg = document.getElementById('noticeMsg');
+      const btnMore = document.getElementById('btn-more');
+      
+      // 임시로 expanded 상태로 만들어서 실제 높이 측정
+      noticeMsg.classList.remove('collapsed');
+      noticeMsg.classList.add('expanded');
+      const fullHeight = noticeMsg.scrollHeight;
+      
+      // 다시 collapsed 상태로 되돌림
+      noticeMsg.classList.remove('expanded');
+      noticeMsg.classList.add('collapsed');
+      const collapsedHeight = noticeMsg.scrollHeight;
+      
+      btnMore.style.display = 'block';
+     
+    });
   </script>
 </body>
 </html>
