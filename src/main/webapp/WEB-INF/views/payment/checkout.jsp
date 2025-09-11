@@ -223,7 +223,7 @@ html, body{
   var couponApplied = '${orderData.couponApplied}'; // "Y" | "N" 
   console.log('teststest/' + orderType);
   // cart 파싱
-  var cartItems = [];
+  var cartItems = [];https://github.com/KOSA-Cafe-in/CafeIn/pull/17/conflict?name=src%252Fmain%252Fwebapp%252FWEB-INF%252Fviews%252Fpayment%252Fcheckout.jsp&ancestor_oid=593539239cfa46d0a83b247d3cdcca96f6697a2c&base_oid=ae8b9430c6ffda647b7d6511162739709aebdd31&head_oid=528e6670fdb9816082193c4ef25e6adff7a58457
   try {
     const rawCartData = document.getElementById('cartJson').textContent;
     console.log('Raw cart JSON from server:', rawCartData); // 디버깅 로그 추가
