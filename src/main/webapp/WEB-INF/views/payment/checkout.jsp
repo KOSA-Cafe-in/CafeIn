@@ -19,8 +19,6 @@
   --primary:#2563eb;
   --primary-pressed:#1e40af;
   --line:#e5e7eb;
-  --accent:#20c8c8;
-  --pill:#f0f2f7;
   --shadow:0 6px 16px rgba(0,0,0,.06);
 }
 
@@ -34,6 +32,7 @@ html, body{
   color:var(--text);
 }
 
+/* phone frame */
 .phone{
   max-width:420px;
   margin:0 auto;
@@ -42,7 +41,11 @@ html, body{
   flex-direction:column;
   background:#fff;
 }
+@media (min-width:421px){
+  .phone{ border-left:1px solid var(--line); border-right:1px solid var(--line); }
+}
 
+/* header (include에서 내려오는 구조용, 건드리지 않음) */
 .header{
   display:flex;
   align-items:center;
@@ -54,88 +57,120 @@ html, body{
   background:#fff;
   z-index:10;
 }
-
 .back{ font-size:20px; line-height:1; cursor:pointer; }
 .title{ font-weight:700; font-size:18px; }
 
+/* body */
 .content{
   flex:1;
   overflow:auto;
   background:var(--bg);
-  padding:12px 12px 120px;
+  padding:16px 12px 140px;
 }
+.order-meta{
+  padding:8px 0 12px;
+  color:var(--muted);
+  font-size:13px;
+}
+.cart{ display:block; }
 
-.cart{ display:grid; gap:10px; margin:4px 0 8px; }
-
-.item{
+/* 주문 요약 카드 */
+.summary-card{
   background:var(--card);
+  border:1px solid var(--line);
   border-radius:18px;
-  padding:14px 12px;
   box-shadow:var(--shadow);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  padding:12px;
 }
-
-.item-left{ min-width:0; }
-.name{ font-weight:600; }
-.desc{ margin-top:4px; color:var(--muted); font-size:13px; }
-.price{ margin-top:6px; color:var(--muted); }
-.remove{ margin-left:8px; border:none; background:transparent; font-size:18px; color:#9ca3af; cursor:pointer; }
-
-.qty{ display:flex; align-items:center; gap:6px; }
-.btn-qty{
-  width:36px; height:36px; border-radius:12px;
-  border:1px solid var(--line); background:#fff; font-size:20px; line-height:1; cursor:pointer;
-}
-.count{ min-width:24px; text-align:center; font-weight:700; }
-
-.addmore{ display:block; text-align:center; margin:8px auto 16px; color:#2563eb; text-decoration:none; font-weight:700; }
-
-.option-group{ display:grid; gap:10px; margin:10px 0 16px; }
-
-.option{
-  background:#fff; border:2px solid var(--line); border-radius:16px;
-  padding:14px 12px; box-shadow:var(--shadow);
-  display:flex; align-items:center; justify-content:space-between; cursor:pointer;
-}
-.option.active{ border-color:var(--accent); box-shadow:0 0 0 4px rgba(32,200,200,.12); }
-.opt-title{ font-weight:700; }
-.opt-sub{ font-size:12px; color:var(--muted); margin-left:6px; }
-.radio{ width:22px; height:22px; border-radius:50%; border:2px solid var(--line); display:inline-block; }
-.option.active .radio{ border-color:var(--accent); box-shadow:inset 0 0 0 5px var(--accent); }
-
-.coupon-wrap{ margin:4px 0 16px; }
-.coupon-label{ font-size:13px; color:var(--muted); margin-bottom:8px; }
-.coupon-pill{
+.summary-header{
   display:flex; align-items:center; justify-content:space-between;
-  background:var(--pill); border-radius:24px; padding:14px 16px; font-weight:700; cursor:pointer;
+  padding:4px 6px 10px;
+  border-bottom:1px dashed var(--line);
 }
-.coupon-check{
-  width:26px; height:26px; border-radius:50%; border:2px solid var(--line);
-  display:flex; align-items:center; justify-content:center; background:#fff; font-size:16px;
-}
-.coupon-pill.active .coupon-check{ border-color:#10b981; box-shadow:inset 0 0 0 1000px #10b981; color:#fff; }
+.summary-title{ font-weight:800; }
+.summary-count{ font-size:12px; color:var(--muted); }
 
+.summary-list{ list-style:none; margin:10px 0 0; padding:0; }
+.summary-item{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:10px;
+  padding:10px 6px;
+  border-bottom:1px solid var(--line);
+}
+.summary-item:last-child{ border-bottom:none; }
+.si-name{
+  font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.si-meta{ margin-top:2px; font-size:12px; color:var(--muted); }
+.si-price{ text-align:right; font-weight:700; }
+
+.summary-total{
+  margin-top:12px;
+  background:#f9fafb;
+  border:1px dashed var(--line);
+  border-radius:14px;
+  padding:12px;
+}
+.total-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 0;
+}
+.total-row.discount{ color:#10b981; }
+.total-row.final{
+  font-weight:900; font-size:18px;
+  border-top:1px solid var(--line); margin-top:6px; padding-top:12px;
+}
+
+/* 쿠폰 배지 */
+.badge-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:999px;
+  background:#ecfeff; color:#0e7490; font-weight:700; font-size:12px;
+}
+
+/* 빈 상태 */
+.empty{
+  text-align:center; color:var(--muted);
+  background:var(--card); border:1px dashed var(--line);
+  border-radius:18px; padding:24px 12px;
+}
+
+/* 하단 버튼 영역 - 기존 디자인 유지 + 뱃지/금액 정렬 */
 .buttons{
   position:sticky; bottom:60px; z-index:30;
   background:linear-gradient(180deg, rgba(246,247,251,0) 0%, var(--bg) 40%, var(--bg) 100%);
   padding:14px 12px 12px;
 }
-.btn{ width:100%; height:48px; border-radius:14px; border:0; cursor:pointer; font-size:16px; font-weight:700; }
-.btn-outline{ background:#e9eefb; color:#274472; margin-bottom:10px; }
-.btn-primary{ display:flex; align-items:center; justify-content:center; gap:10px; background:var(--primary); color:#fff; }
-.btn-primary:active{ background:var(--primary-pressed); }
-.badge{ min-width:28px; height:28px; border-radius:999px; background:#fff; color:#2563eb; display:inline-flex; align-items:center; justify-content:center; font-weight:800; }
+.btn{
+  width:100%; height:48px;
+  border-radius:14px; border:0; cursor:pointer;
+  font-size:16px; font-weight:700;
+}
+.btn:disabled{ opacity:.6; cursor:not-allowed; }
 
-@media (min-width:421px){
-  .phone{ border-left:1px solid var(--line); border-right:1px solid var(--line); }
+/* 파란 버튼(기존 색/둥근 모서리 유지) + 안쪽 레이아웃 */
+.btn-primary{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  background:var(--primary); color:#fff;
+}
+.btn-primary:active{ background:var(--primary-pressed); }
+
+/* 버튼 안의 동그란 뱃지(수량) */
+.btn-primary .badge{
+  min-width:28px; height:28px;
+  border-radius:999px;
+  background:#fff; color:var(--primary);
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px;
 }
 
-.summary{ bottom:60px; }
-.total .row span{ font-weight:600; }
-.order-meta{ padding:8px 12px; color:var(--muted); font-size:13px; }
+/* 여백 보정 */
+@media (min-width:380px){
+  .summary-card{ padding:16px; }
+}
 </style>
+
 
 <!-- jQuery & PortOne -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -152,9 +187,6 @@ html, body{
   </jsp:include>
 
   <main class="content">
-    <!-- 주문 정보 -->
-    <div class="order-meta">주문번호: ${merchantUid}</div>
-
     <!-- 주문 요약 -->
     <section class="cart" id="orderSummary"></section>
   </main>
@@ -216,29 +248,76 @@ html, body{
 
   
   // 주문 요약 표시
-  (function renderSummary(){
-    try {
-      var totalAmount = 0;
-      var html = '<ul>';
-      cartItems.forEach(function(item){
-        var itemTotal = (item.price || 0) * (item.qty || 0);
-        totalAmount += itemTotal;
-        html += '<li>' + item.name + ' x ' + item.qty + '개  : ' + itemTotal.toLocaleString() + '원</li>';
-      });
-      if(couponApplied == 'Y') html += '<p>-2000원(할인 적용)</p>'
-      var pay = '<p><strong>총 결제금액: ' + totalAmount.toLocaleString() + '원</strong></p>';
-      if(couponApplied == 'Y') {totalAmount -= 2000;
-      pay = '<p><strong>총 결제금액: ' + totalAmount.toLocaleString() + '원(쿠폰 적용)</strong></p>'; }
-      html += '</ul>';
-      html += pay;
-      document.getElementById('orderSummary').innerHTML = html;
-    } catch (e) {
-      console.error(e);
-      document.getElementById('orderSummary').innerHTML = '<p>주문 정보를 불러올 수 없습니다.</p>';
-    }
-  })();
+(function renderSummary(){
+  try {
+    var subtotal = 0;
+    var totalQty = 0; // ✅ 총 수량 합계
 
-  
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      document.getElementById('orderSummary').innerHTML =
+        '<div class="empty">장바구니가 비어 있습니다.</div>';
+      return;
+    }
+
+    var listHtml = cartItems.map(function(item){
+      var qty = Number(item.qty || 0);
+      var price = Number(item.price || 0);
+      var line = price * qty;
+
+      subtotal += line;
+      totalQty += qty; // ✅ 수량 합산
+
+      var safeName = (item.name || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return (
+        '<li class="summary-item">' +
+          '<div>' +
+            '<div class="si-name">' + safeName + '</div>' +
+            '<div class="si-meta">수량 ' + qty + ' · 단가 ' + price.toLocaleString() + '원</div>' +
+          '</div>' +
+          '<div class="si-price">' + line.toLocaleString() + '원</div>' +
+        '</li>'
+      );
+    }).join('');
+
+    var discount = (couponApplied === 'Y') ? 2000 : 0;
+    var finalAmount = Math.max(0, subtotal - discount);
+
+    var html =
+      '<div class="summary-card">' +
+        '<div class="summary-header">' +
+          '<div class="summary-title">주문 요약</div>' +
+          // 원하시면 여기 개수도 totalQty로 바꿀 수 있어요
+          '<div class="summary-count">총 ' + totalQty + '개</div>' +
+        '</div>' +
+        '<ul class="summary-list">' + listHtml + '</ul>' +
+        '<div class="summary-total">' +
+          '<div class="total-row"><span>상품 합계</span><strong>' + subtotal.toLocaleString() + '원</strong></div>' +
+          (discount > 0
+            ? '<div class="total-row discount"><span><span class="badge-pill">쿠폰 적용</span></span><strong>-' + discount.toLocaleString() + '원</strong></div>'
+            : ''
+          ) +
+          '<div class="total-row final"><span>최종 결제금액</span><span>' + finalAmount.toLocaleString() + '원</span></div>' +
+        '</div>' +
+        '<div class="order-meta" style="margin-top:10px; font-size:12px; text-align:right;">주문번호: ' + merchantUid + '</div>' +
+      '</div>';
+
+    document.getElementById('orderSummary').innerHTML = html;
+
+    // ✅ 버튼 라벨: 총 수량 사용
+    var btn = document.getElementById('paymentBtn');
+    btn.innerHTML =
+      '</span> ' +
+      finalAmount.toLocaleString() + '원 결제하기' +
+      (discount > 0 ? ' (쿠폰 적용)' : '');
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('orderSummary').innerHTML = '<p>주문 정보를 불러올 수 없습니다.</p>';
+  }
+})();
+
+
+
   // 결제 버튼 클릭
   document.getElementById('paymentBtn').addEventListener('click', function(){
     var totalAmount = cartItems.reduce(function(sum, item){
@@ -265,10 +344,10 @@ html, body{
       buyer_name: '고객',
       buyer_tel: '010-0000-0000',
       buyer_addr: '서울특별시 강남구',
-      buyer_postcode: '06018'
+      buyer_postcode: '06018',
+      m_redirect_url: "http://192.168.1.203:8080/payment/complete"
     }, function(rsp){
-    	console.log('테스트' + couponApplied);
-      if (rsp.success) {
+    	if (rsp.success) {
         $.ajax({
           url: '<c:url value="/payment/complete"/>',
           method: 'POST',

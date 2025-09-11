@@ -46,6 +46,47 @@ public class PaymentController {
         model.addAttribute("portoneImpCode", portoneImpCode);
         return "payment/checkout";
     }
+    
+ // 모바일 결제 완료 처리 (GET 방식)
+    @GetMapping("/complete")
+    public String paymentCompleteGet(
+        @RequestParam("imp_uid") String impUid,
+        @RequestParam("merchant_uid") String merchantUid,
+        @RequestParam(value = "imp_success", defaultValue = "false") String impSuccess,
+        HttpSession session) {
+        
+        System.out.println("Mobile payment complete - GET method");
+        System.out.println("imp_uid: " + impUid + ", merchant_uid: " + merchantUid + ", success: " + impSuccess);
+
+        if ("true".equals(impSuccess)) {
+            try {
+                // PortOne에서 결제 정보 검증
+            	PaymentDTO payment = paymentService.verifyPayment(impUid);
+
+                if (payment == null || !"paid".equals(payment.getStatus())) {
+                    return "redirect:/payment/fail?error_msg=" + java.net.URLEncoder.encode("결제 검증에 실패했습니다", "UTF-8");
+                }
+
+                // 세션에 결제 정보 저장
+                session.setAttribute("lastPayment", payment);
+
+                // 간단한 주문 정보 생성
+                OrderDTO order = new OrderDTO();
+                order.setTotalPrice(payment.getAmount().longValue());
+                order.setPaymentMethod(payment.getPaymentMethod());
+                order.setStatus("Y"); // 완료 상태로 설정
+                session.setAttribute("lastOrder", order);
+
+                return "redirect:/payment/success";
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/payment/fail?error_msg=";
+            }
+        } else {
+            return "redirect:/payment/fail?error_msg=결제취소";
+        }
+    }
 
     // 결제 검증 및 완료 처리
     @PostMapping(
@@ -137,8 +178,8 @@ public class PaymentController {
         model.addAttribute("order", order);
 
         // 원하면 일회성으로 제거
-        session.removeAttribute("lastPayment");
-        session.removeAttribute("lastOrder");
+        //session.removeAttribute("lastPayment");
+        //session.removeAttribute("lastOrder");
         return "/payment/success"; // success.jsp
     }
 
