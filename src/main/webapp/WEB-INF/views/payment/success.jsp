@@ -234,7 +234,7 @@
                 <c:if test="${order.couponUse == 'Y'}">
                     <div class="total-row">
                         <span>쿠폰할인</span>
-                        <span class="text-red-600">-할인금액원</span>
+                        <span class="text-red-600">-2000원</span>
                     </div>
                 </c:if>
                 <div class="total-row total-final">
@@ -250,5 +250,8 @@
     <jsp:param name="active" value="cart" />
   </jsp:include>
     </main>
+    <script>
+    localStorage.removeItem("cart:v1");
+    </script>
 </body>
 </html>

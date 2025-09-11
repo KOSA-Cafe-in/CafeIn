@@ -15,6 +15,7 @@ public class OrderInfoDTO {
  @Data
  public static class Item {
      private Long menuId;
+     private String menuName;
      private Integer qty;  // 수량
  }
 }

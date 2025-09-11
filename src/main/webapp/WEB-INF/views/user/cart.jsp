@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -59,7 +59,7 @@
 <div class="phone">
 <!-- 헤더 include -->
         <jsp:include page="/WEB-INF/views/common/header.jsp">
-           <jsp:param name="backLink" value="true" />
+        	<jsp:param name="backLink" value="true" />
             <jsp:param name="title" value="장바구니" />
             <jsp:param name="showOrderHistory" value="false" />
         </jsp:include>
@@ -77,7 +77,7 @@
         <div><span class="opt-title">포장하기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
-      <label class="option ${orderType eq 'N' ? 'active' : ''}" data-type="N">
+		<label class="option ${orderType eq 'N' or empty orderType ? 'active' : ''}" data-type="N">
         <div><span class="opt-title">먹고가기</span></div>
         <span class="radio" aria-hidden="true"></span>
       </label>
@@ -96,7 +96,7 @@
   <!-- 하단 버튼 -->
 <div class="buttons">
   <form id="checkoutForm" action="<c:url value='/payment/checkout'/>" method="post">
-    <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'Y'}"/>
+    <input type="hidden" name="orderType" id="orderTypeInput" value="${orderType != null ? orderType : 'N'}"/>
     <input type="hidden" name="couponApplied" id="couponAppliedInput" value="${couponApplied ? 'Y' : 'N'}"/>
     <input type="hidden" name="cart" id="cartJson"/>
     <button class="btn btn-primary" type="submit" id="orderBtn">
@@ -275,6 +275,7 @@ document.getElementById('orderType').addEventListener('click',(e)=>{
   document.querySelectorAll('#orderType .option').forEach(o=>o.classList.remove('active'));
   opt.classList.add('active');
   document.getElementById('orderTypeInput').value = opt.dataset.type; // Y | N
+
 });
 
 /* === 쿠폰 토글 → hidden input 반영 === */

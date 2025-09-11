@@ -15,13 +15,12 @@
 </head>
 <body>
 	<div class="phone">
-
 		<!-- 헤더 include -->
-<jsp:include page="/WEB-INF/views/common/header.jsp">
-        	<jsp:param name="backLink" value="false" />
-            <jsp:param name="title" value="메뉴" />
-            <jsp:param name="showOrderHistory" value="false" />
-        </jsp:include>
+		<jsp:include page="/WEB-INF/views/common/header.jsp">
+			<jsp:param name="backLink" value="false" />
+			<jsp:param name="title" value="메뉴" />
+			<jsp:param name="showOrderHistory" value="false" />
+		</jsp:include>
 
 
 		<jsp:include page="/WEB-INF/views/common/cartBar.jsp" />
@@ -40,6 +39,9 @@
 			<c:forEach var="menu" items="${menuList}">
 				<article class="card" onclick="goToMenuDetail(${menu.menuId})"
 					style="cursor: pointer;">
+					<!-- 썸네일 -->
+					<img src="${menu.menuPictureUrl}" alt="${menu.name}"
+						class="menu-img" />
 					<div class="stack">
 						<div class="name">${menu.name}</div>
 						<div class="price">${menu.price}원</div>
@@ -62,6 +64,129 @@
 
 	</div>
 
+	<style>
+.home-wrap {
+	max-width: 560px;
+	margin: 0 auto;
+	padding: 16px;
+}
+
+.title {
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 12px;
+	text-align: center;
+}
+
+.cafe-intro {
+	background: #f9f9f9;
+	border-radius: 12px;
+	padding: 12px;
+	margin-bottom: 16px;
+	position: relative;
+}
+
+#intro-text {
+	font-size: 14px;
+	margin: 0;
+	white-space: pre-wrap;
+}
+
+.intro-actions {
+	margin-top: 6px;
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.icon-button {
+	background: none;
+	border: none;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.menu-actions {
+	text-align: right;
+	margin-bottom: 16px;
+}
+
+.menu-add-btn {
+	padding: 8px 16px;
+	background: #2e6cff;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 8px;
+}
+
+.menu-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.menu-item {
+	display: flex;
+	gap: 12px;
+	border: 1px solid #eee;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.menu-img {
+	width: 72px;
+	height: 72px;
+	object-fit: cover;
+	border-radius: 8px;
+	background: #ddd;
+}
+
+.menu-info h3 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.menu-info p {
+	margin: 4px 0;
+	font-size: 14px;
+	color: #666;
+}
+
+.clamp-1 {
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+#intro-textarea {
+	width: 100%;
+	height: 84px;
+	resize: none !important;
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+.intro-counter {
+	font-size: 12px;
+	color: #999;
+	text-align: right;
+	margin: 4px 0 8px;
+}
+
+.menu-clickable {
+	cursor: pointer;
+	position: relative;
+}
+
+.menu-arrow {
+	margin-left: auto;
+	align-self: center;
+	font-size: 18px;
+	opacity: .7;
+}
+</style>
+
 	<script>
     // 메뉴 상세페이지로 이동하는 함수
     function goToMenuDetail(menuId) {
@@ -69,7 +194,6 @@
         window.location.href = '/menu/detail/' + menuId;
       }
     }
-
     // 장바구니에 담기 함수 (+ 버튼 클릭 시)
     function addToCart(menuId) {
       alert('장바구니에 담겼습니다. (메뉴 ID: ' + menuId + ')');
