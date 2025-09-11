@@ -17,4 +17,5 @@ public interface OrderService {
     
     int sumDrinkCountByUserAndCafe(Long userId, Long cafeId);
 
+    int sumOrderItemCountByOrderId(long orderId);
 }

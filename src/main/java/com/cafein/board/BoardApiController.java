@@ -45,6 +45,34 @@ public class BoardApiController {
     	return ResponseEntity.ok(response);
     }
     
+    // 카페 게시글 페이징 조회 (GET /api/board/paged?cafeId=1&page=0&size=10)
+    @GetMapping("/paged")
+    public ResponseEntity<Map<String,Object>> getBoardListWithPaging(
+            @RequestParam Long cafeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+    	Map<String, Object> response = new HashMap<>();
+    	
+    	try {
+    		List<BoardWithUserDTO> boardList = boardService.findBoardListWithPaging(cafeId, page, size);
+    		int totalCount = boardService.getTotalBoardCount(cafeId);
+    		boolean hasMore = (page + 1) * size < totalCount;
+    		
+    		response.put("success", true);
+    		response.put("boards", boardList);  // 프론트엔드에서 boards로 접근
+    		response.put("currentPage", page);
+    		response.put("size", size);
+    		response.put("totalCount", totalCount);
+    		response.put("hasMore", hasMore);
+    	} catch(Exception e) {
+    		response.put("success", false);
+            response.put("message", "게시글 목록을 불러오는데 실패했습니다.");
+            response.put("error", e.getMessage());
+    	}
+    	
+    	return ResponseEntity.ok(response);
+    }
+    
     // 게시글 상세 조회	(GET /api/board/1)
     @GetMapping("/{boardId}")
     public ResponseEntity<Map<String,Object>> getBoardDetail(@PathVariable Long boardId){

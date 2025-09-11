@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class StampDTO {
     private Long stampId;
-    private Long stampCount;
-    private Long discount;
-    private Long userId;
+    private Long userCafeId;
+    private Integer stampCount;
+    private Integer discount;
 }

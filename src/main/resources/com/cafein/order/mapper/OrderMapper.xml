@@ -118,5 +118,13 @@
      AND uc.cafeId = #{cafeId}
     -- 취소/삭제 개념이 있으면 여기서 제외 조건 추가
   </select>
+  
+  <!-- 주문 번호 기준으로 주문 음료 총 개수 합산 -->
+  <select id="sumOrderItemCountByOrderId" resultType="int">
+    SELECT NVL(SUM(oi.count), 0)
+    FROM Orders o
+    JOIN OrderItem oi ON oi.orderId = o.orderId    
+    WHERE oi.orderId = #{orderId}
+  </select>
 
 </mapper>

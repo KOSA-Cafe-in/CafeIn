@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cafein.cafe.CafeDTO;
 import com.cafein.cafe.CafeService;
+import com.cafein.order.OrderService;   // ✅ 추가
+import com.cafein.stamp.StampService;
 import com.cafein.user.UserDTO;
 import com.cafein.user.UserService;
 import com.cafein.usercafe.UserCafeDTO;
 import com.cafein.usercafe.UserCafeService;
-import com.cafein.order.OrderService;   // ✅ 추가
 
 @Controller
 public class MypageController {
@@ -31,6 +32,9 @@ public class MypageController {
 
     @Autowired
     private OrderService orderService;   // ✅ 추가: 음료 총 수량 계산용
+    
+    @Autowired
+    private StampService stampService;
 
     // 마이페이지 조회
     @GetMapping("/mypage")
@@ -52,11 +56,10 @@ public class MypageController {
         model.addAttribute("cafe", cafe);
         model.addAttribute("userCafe", userCafe);
 
-        // ✅ 추가: 스탬프/쿠폰 계산 (총 음료수 = OrderItem.count 합계)
-        // OrderService에 sumDrinkCountByUserAndCafe(userId, cafeId) 메서드가 존재해야 합니다.
-        int totalDrinks = orderService.sumDrinkCountByUserAndCafe(user.getUserId(), cafe.getCafeId());
-        int stampCount  = totalDrinks % 10;   // 현재 찍혀있는 스탬프(0~9)
-        int couponCount = totalDrinks / 10;   // 누적 쿠폰 수(정수)
+        // ✅ 추가: 스탬프/쿠폰 계산
+        int totalStamp = stampService.findStampByUserCafeId(userCafe.getUserCafeId()).getStampCount();
+        int stampCount  = totalStamp % 10;   // 현재 찍혀있는 스탬프(0~9)
+        int couponCount = totalStamp / 10;   // 누적 쿠폰 수(정수)
 
         model.addAttribute("stampCount", stampCount);
         model.addAttribute("couponCount", couponCount);

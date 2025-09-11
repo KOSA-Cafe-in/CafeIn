@@ -37,7 +37,8 @@
 					  com.cafein.order.mapper,
 					  com.cafein.user.mapper,
 					  com.cafein.usercafe.mapper,
-					  com.cafein.board.mapper" />
+					  com.cafein.board.mapper,
+					  com.cafein.stamp.mapper" />
 
 	<context:component-scan
 		base-package="com.cafein" />

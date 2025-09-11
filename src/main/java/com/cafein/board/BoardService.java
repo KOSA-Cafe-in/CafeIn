@@ -12,4 +12,8 @@ public interface BoardService {
 	void createBoard(BoardDTO board, MultipartFile imageFile) throws Exception;
 	void updateBoard(BoardDTO board, MultipartFile imageFile) throws Exception;
 	void deleteBoard(Long boardId);
+	
+	// 무한스크롤을 위한 페이징 메서드
+	List<BoardWithUserDTO> findBoardListWithPaging(Long cafeId, int page, int size);
+	int getTotalBoardCount(Long cafeId);
 }
