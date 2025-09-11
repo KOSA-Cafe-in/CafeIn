@@ -71,6 +71,15 @@
       border-radius: 14px;
       padding: 18px;
     }
+     .card2 {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
     .title {
       margin: 0 0 6px 0;
       font-size: 20px;
@@ -123,12 +132,11 @@
       <div class="card" style="text-align:center;">
         <div class="big-emoji">⚠️</div>
         <h1 class="title">결제를 완료하지 못했어요</h1>
-        <p class="muted">아래 사유를 확인하시고 다시 시도해 주세요.</p>
       </div>
 
       <c:if test="${not empty errorMsg}">
-        <div class="card">
-          <h3 style="margin:0 0 10px 0;">실패 사유</h3>
+        <div class="card2">
+          <h3 style="text-align:center;">실패 사유</h3>
           <p class="muted">${errorMsg}</p>
         </div>
       </c:if>
