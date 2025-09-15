@@ -21,7 +21,7 @@
     }
 
     /* Phone frame (home.jsp와 동일 컨셉) */
-    .phone { max-width:430px; margin:12px auto; padding:10px; }
+    .phone { max-width:430px; }
     .phone-shell{
       position:relative; border:1px solid var(--border); border-radius:28px;
       background:var(--card); box-shadow:0 12px 30px rgba(0,0,0,.08); overflow:hidden;
@@ -65,10 +65,6 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <div class="phone">
-  <div class="phone-shell">
-    <div class="phone-inner">
-
-
 		<!-- 헤더 include -->
 		<jsp:include page="/WEB-INF/views/common/header.jsp">
             <jsp:param name="backLink" value="true" />
@@ -108,9 +104,6 @@
 		<jsp:include page="/WEB-INF/views/common/nav.jsp">
 			<jsp:param name="active" value="home" />
 		</jsp:include>
-
-    </div>
-  </div>
 </div>
 
 <script>
