@@ -26,14 +26,15 @@
             font-size: 28px;
             font-weight: bold;
             color: #333;
+            margin-top: 30px;
             margin-bottom: 200px;
             text-align: center;
         }
         
         .login-section {
             width: 100%;
-            padding: 0 40px;
-            margin-bottom: 40px;
+            padding: 0 20px;
+            margin-bottom: 20px;
         }
         
         .kakao-login-btn {
@@ -49,7 +50,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             transition: background-color 0.2s;
         }
         
@@ -67,15 +68,8 @@
             color: #666;
             font-weight: normal;
             letter-spacing: 2px;
-        }       
-        
-        /* 반응형 처리 */
-        @media (max-width: 375px) {
-            .container {
-                width: 100vw;
-                height: 100vh;
-            }
-        }
+            margin-bottom: 20px;
+        }              
     </style>
 </head>
 <body>

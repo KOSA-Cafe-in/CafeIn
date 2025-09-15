@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cafein.cafe.CafeDTO;
 import com.cafein.cafe.CafeService;
 import com.cafein.order.OrderService;   // ✅ 추가
+import com.cafein.stamp.StampDTO;
 import com.cafein.stamp.StampService;
 import com.cafein.user.UserDTO;
 import com.cafein.user.UserService;
@@ -55,14 +56,18 @@ public class MypageController {
         model.addAttribute("user", user);
         model.addAttribute("cafe", cafe);
         model.addAttribute("userCafe", userCafe);
+        
+        StampDTO stamp = stampService.findStampByUserCafeId(userCafe.getUserCafeId());
 
         // ✅ 추가: 스탬프/쿠폰 계산
-        int totalStamp = stampService.findStampByUserCafeId(userCafe.getUserCafeId()).getStampCount();
-        int stampCount  = totalStamp % 10;   // 현재 찍혀있는 스탬프(0~9)
-        int couponCount = totalStamp / 10;   // 누적 쿠폰 수(정수)
-
-        model.addAttribute("stampCount", stampCount);
-        model.addAttribute("couponCount", couponCount);
+        if(stamp != null && stamp.getStampCount() != null) {
+        	int totalStamp = stamp.getStampCount();
+        	int stampCount  = totalStamp % 10;   // 현재 찍혀있는 스탬프(0~9)
+        	int couponCount = totalStamp / 10;   // 누적 쿠폰 수(정수)
+        	
+        	model.addAttribute("stampCount", stampCount);
+        	model.addAttribute("couponCount", couponCount);        	
+        }
 
         return "mypage/mypage";
     }

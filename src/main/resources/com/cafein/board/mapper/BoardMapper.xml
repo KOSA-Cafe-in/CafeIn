@@ -9,7 +9,7 @@
 		SELECT boardId, cafeId, userId, title, content, pictureUrl AS boardPictureUrl, createdDate, modifiedDate 
 		FROM Board 
 		WHERE cafeId = #{cafeId} 
-		ORDER BY createdDate DESC
+		ORDER BY createdDate DESC, boardId DESC
 	</select>
 	
 	<!-- 게시글 상세 조회 (추가) -->

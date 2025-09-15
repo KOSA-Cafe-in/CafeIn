@@ -1,6 +1,5 @@
 package com.cafein.payment;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,22 +169,23 @@ public class PaymentController {
         if (payment == null || order == null) {
             return "redirect:/"; // 새로고침 등으로 세션이 비었을 때 대비
         }
-        //int orderItemCount = orderService.sumOrderItemCountByOrderId(order.getOrderId());
         
-        /*
+        int orderItemCount = orderService.sumOrderItemCountByOrderId(order.getOrderId());
+        
+        
         if(order.getCouponUse().equals("Y")) {
         	stampService.minusStampCountByUserCafeId(userCafeId);
         }
-        */
         
-        //stampService.updateStampCountByUserCafeId(userCafeId, orderItemCount);        
+        
+        stampService.updateStampCountByUserCafeId(userCafeId, orderItemCount);        
         
         model.addAttribute("payment", payment);
         model.addAttribute("order", order);
 
         // 원하면 일회성으로 제거
-        //session.removeAttribute("lastPayment");
-        //session.removeAttribute("lastOrder");
+        session.removeAttribute("lastPayment");
+        session.removeAttribute("lastOrder");
         return "/payment/success"; // success.jsp
     }
 
