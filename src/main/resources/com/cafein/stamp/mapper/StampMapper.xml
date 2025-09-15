@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cafein.stamp.mapper.StampMapper">
+	<!-- userCafeId로 조회 (Long userCafeId) -->
+	<select id="findStampByUserCafeId" resultType="com.cafein.stamp.StampDTO" parameterType="long">
+		SELECT stampId, userCafeId, stampCount, discount
+		FROM Stamp		
+		WHERE userCafeId = #{userCafeId}
+	</select>
+	
+	    <!-- stampId로 조회 (Long) -->
+    <select id="findStampByStampId" resultType="com.cafein.stamp.StampDTO" parameterType="long">
+        SELECT stampId, userCafeId, stampCount, discount
+        FROM Stamp 
+        WHERE stampId = #{stampId}
+    </select>
+    
+    <!-- 스탬프 생성 -->
+    <insert id="createStamp" parameterType="map" useGeneratedKeys="true" keyProperty="stampId">
+        INSERT INTO Stamp (userCafeId, stampCount, discount)
+        VALUES (#{userCafeId}, #{stampCount}, #{discount})
+    </insert>
+    
+    <!-- stampId로 스탬프 개수 업데이트 (기존 값에 추가) -->
+    <update id="updateStampCountByStampId" parameterType="map">
+        UPDATE Stamp
+        SET stampCount = stampCount + #{stampCount}
+        WHERE stampId = #{stampId}
+    </update>
+    
+    <!-- userCafeId로 스탬프 개수 업데이트 (기존 값에 추가) -->
+    <update id="updateStampCountByUserCafeId" parameterType="map">
+        UPDATE Stamp
+        SET stampCount = stampCount + #{stampCount}
+        WHERE userCafeId = #{userCafeId}
+    </update>    
+    
+     <!-- userCafeId로 스탬프 개수 업데이트 (기존 값에 추가) -->
+    <update id="minusStampCountByStampId" parameterType="Long">
+        UPDATE Stamp
+        SET stampCount = stampCount - 10
+        WHERE stampId = #{stampId}
+    </update>   
+    
+     <!-- 주문이 확인되면 userCafeId로 스탬프 개수 업데이트 (기존 값에서 삭제) -->
+    <update id="minusStampCountByUserCafeId" parameterType="Long">
+        UPDATE Stamp
+        SET stampCount = stampCount - 10
+        WHERE userCafeId = #{userCafeId}
+    </update>
+ </mapper> 
