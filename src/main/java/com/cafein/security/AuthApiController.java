@@ -45,19 +45,15 @@ public class AuthApiController {
                 response.put("cafeId", session.getAttribute("cafeId"));
                 response.put("userCafeId", session.getAttribute("userCafeId"));
                 
-                System.out.println("인증 성공 - 사용자 카페 ID: " + session.getAttribute("userCafeId"));
-                
             } else {
                 // 로그인되지 않은 상태
                 response.put("isLoggedIn", false);
                 response.put("message", "Not authenticated");
-                System.out.println("인증 실패 - 세션이 없거나 로그인 정보가 없음");
             }
             
         } catch (Exception e) {
             response.put("isLoggedIn", false);
             response.put("error", "Token validation failed");
-            System.out.println("인증 오류: " + e.getMessage());
         }
         
     	return ResponseEntity.ok(response);

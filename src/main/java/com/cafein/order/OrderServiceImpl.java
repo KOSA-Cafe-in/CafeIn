@@ -28,6 +28,18 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return orders;
 	}
+	
+	@Override
+	public List<OrderDTO> findAllOrderHistory(Long userCafeId) {
+		
+	    List<OrderDTO> orders = orderMapper.findAllOrderHistory(userCafeId);
+	    for (OrderDTO o : orders) {
+	        if (o != null) {
+	            o.setItems(orderMapper.findItemsByOrderId(o.getOrderId()));
+	        }
+	    }
+	    return orders;
+	}
 
 	@Transactional
 	@Override
@@ -39,9 +51,8 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDTO createOrder(PaymentDTO payment, String orderType, String couponUse, Long userCafeId,
 			List<OrderItemDTO> items) {
 		OrderDTO order = new OrderDTO();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		try {
-			System.out.println(sdf.parse(payment.getCreatedDate()));
 			order.setCreatedDate(sdf.parse(payment.getCreatedDate()));
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -57,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
 			order.setTotalPrice(payment.getAmount());
 		}
 		order.setStatus("N");
+		order.setMerchantUid(payment.getMerchantUid());
 		order.setTakeout(orderType);
 		order.setCouponUse(couponUse);
 		order.setUserCafeId(userCafeId);
@@ -89,5 +101,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int sumOrderItemCountByOrderId(long orderId){
 		return orderMapper.sumOrderItemCountByOrderId(orderId);
+	}
+	
+	@Transactional(readOnly = true)
+	public String getCurrentStatusByMerchantUid(String merchantUid) {
+	String status = orderMapper.selectStatusByMerchantUid(merchantUid);
+	return status != null ? status : "N";
 	}
 }

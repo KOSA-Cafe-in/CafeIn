@@ -48,6 +48,7 @@
             </div>
 
             <div class="success-title">주문이 완료되었습니다!</div>
+            <div class="success-subtitle">제조가 완료되면 상태가 자동으로 변경됩니다.</div>
 
             <!-- 주문 정보 -->
             <div class="order-info">
@@ -132,6 +133,55 @@
     <!-- 장바구니 초기화 -->
     <script>
       try { localStorage.removeItem("cart:v1"); } catch(e) {}
+    </script>
+
+    <!-- 상태 폴링 (1~3초 랜덤 간격, JSON /order/status) -->
+    <script>
+      (function(){
+        var CTX = '<c:out value="${pageContext.request.contextPath}" />';
+        var ORDER_KEY = '<c:out value="${payment.merchantUid}" />';
+        var stopped = false;
+
+        function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+        function applyBadge(isDone){
+          var badge = document.getElementById('status-badge');
+          if (!badge) return;
+          if (isDone){
+            badge.classList.remove('status-preparing');
+            badge.classList.add('status-complete');
+            badge.textContent = '제조완료';
+          } else {
+            badge.classList.remove('status-complete');
+            badge.classList.add('status-preparing');
+            badge.textContent = '준비중';
+          }
+        }
+
+        function scheduleNext(){
+          if (stopped) return;
+          setTimeout(pollOnce, randInt(1000, 3000)); // 1~3초 랜덤
+        }
+
+        function pollOnce(){
+          if (stopped) return;
+          var url = CTX + '/order/status?merchantUid=' + encodeURIComponent(ORDER_KEY) + '&t=' + new Date().getTime();
+          // Java 8 서버 호환과는 무관하지만, 캐시 방지를 위해 timestamp를 붙입니다.
+          fetch(url, { headers: { 'Accept':'application/json' }, cache: 'no-store' })
+            .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(function(data){
+              var done = (data && data.status === 'Y');
+              applyBadge(done);
+              if (done) { stopped = true; return; }
+              scheduleNext();
+            })
+            .catch(function(){ scheduleNext(); });
+        }
+
+        scheduleNext();
+        window.addEventListener('beforeunload', function(){ stopped = true; });
+      })();
+      console.log(order.status);
     </script>
 </body>
 </html>

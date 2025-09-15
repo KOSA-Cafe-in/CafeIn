@@ -7,6 +7,8 @@ import com.cafein.payment.PaymentDTO;
 public interface OrderService {
     // 카페별 최신 주문 리스트
     List<OrderDTO> findRecentOrdersForCafe(Long cafeId);
+    
+    List<OrderDTO> findAllOrderHistory(Long userCafeId);
 
     // 주문 완료 처리 (status: 'Y') → 영향 행 수 반환
     int markDone(Long orderId);
@@ -18,4 +20,6 @@ public interface OrderService {
     int sumDrinkCountByUserAndCafe(Long userId, Long cafeId);
 
     int sumOrderItemCountByOrderId(long orderId);
+    
+    public String getCurrentStatusByMerchantUid(String merchantUid);
 }

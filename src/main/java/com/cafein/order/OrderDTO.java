@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class OrderDTO {
     private Long orderId;
+    private String merchantUid;
     private Long userCafeId;
     private String paymentMethod;
     private Long totalPrice;
