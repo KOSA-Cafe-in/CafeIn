@@ -15,11 +15,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         
-        // 요청된 URL 정보 로깅
-        String requestedUrl = request.getRequestURI();
-        System.out.println("접근 거부 - 요청된 URL: " + requestedUrl);
-        System.out.println("접근 거부 사유: " + accessDeniedException.getMessage());
-        
         // 접근 거부 에러페이지로 리다이렉트
         response.sendRedirect(request.getContextPath() + "/error/error?message=" + 
                              java.net.URLEncoder.encode("해당 페이지에 접근할 권한이 없습니다.", "UTF-8"));

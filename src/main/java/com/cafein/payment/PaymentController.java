@@ -1,5 +1,6 @@
 package com.cafein.payment;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +60,6 @@ public class PaymentController {
         @RequestParam(value = "imp_success", defaultValue = "false") String impSuccess,
         HttpSession session) {
         
-        System.out.println("Mobile payment complete - GET method");
-        System.out.println("imp_uid: " + impUid + ", merchant_uid: " + merchantUid + ", success: " + impSuccess);
 
         if ("true".equals(impSuccess)) {
             try {
@@ -78,7 +77,7 @@ public class PaymentController {
                 OrderDTO order = new OrderDTO();
                 order.setTotalPrice(payment.getAmount().longValue());
                 order.setPaymentMethod(payment.getPaymentMethod());
-                order.setStatus("Y"); // 완료 상태로 설정
+                order.setStatus("N"); // 완료 상태로 설정
                 session.setAttribute("lastOrder", order);
 
                 return "redirect:/payment/success";
@@ -102,12 +101,11 @@ public class PaymentController {
     public ResponseEntity<?> paymentComplete(@RequestBody OrderInfoDTO orderInfo, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
 
-        System.out.println("POST 성공");
         try {
             String impUid = orderInfo.getImp_uid();
             String merchantUid = orderInfo.getMerchant_uid();
-            System.out.println(impUid +" , " + merchantUid);
-            
+
+
             String orderType = orderInfo.getTakeOut();
             String couponUse = orderInfo.getCoupon();
             
@@ -141,12 +139,6 @@ public class PaymentController {
             	    })
             	    .collect(Collectors.toList());
             
-            for(OrderItemDTO item : items)
-            {
-            	System.out.println("리스트 테스트ㅡㅡㅡㅡㅡㅡㅡ" + item.getCount());
-            	System.out.println(item.getMenuId());
-            }
-            
             // 3. 주문 정보 저장 (실제 주문 처리)
             // 여기서 OrderService를 통해 주문을 데이터베이스에 저장
             Long userCafeId = (Long) session.getAttribute("userCafeId");
@@ -166,7 +158,6 @@ public class PaymentController {
             response.put("success", false);
             response.put("message", "결제 처리 중 오류가 발생했습니다.");
         }
-        System.out.println(response.get("message"));
         return ResponseEntity.ok(response);
     }
 
@@ -179,13 +170,15 @@ public class PaymentController {
         if (payment == null || order == null) {
             return "redirect:/"; // 새로고침 등으로 세션이 비었을 때 대비
         }
-        int orderItemCount = orderService.sumOrderItemCountByOrderId(order.getOrderId());
+        //int orderItemCount = orderService.sumOrderItemCountByOrderId(order.getOrderId());
         
+        /*
         if(order.getCouponUse().equals("Y")) {
         	stampService.minusStampCountByUserCafeId(userCafeId);
         }
+        */
         
-        stampService.updateStampCountByUserCafeId(userCafeId, orderItemCount);        
+        //stampService.updateStampCountByUserCafeId(userCafeId, orderItemCount);        
         
         model.addAttribute("payment", payment);
         model.addAttribute("order", order);
@@ -222,4 +215,7 @@ public class PaymentController {
 
         return ResponseEntity.ok(response);
     }
+    
+  
+
 }

@@ -3,128 +3,160 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cafein.order.mapper.OrderMapper">
 
-  <!-- 카페의 최신 주문 목록 -->
-  <select id="findRecentOrdersForCafe" parameterType="long"
-          resultType="com.cafein.order.OrderDTO">
-    SELECT
-      o.orderId          AS orderId,
-      uc.userId          AS userId,
-      uc.cafeId          AS cafeId,
-      o.paymentMethod    AS paymentMethod,
-      o.totalPrice       AS totalPrice,
-      o.createdDate      AS createdDate,
-      o.status           AS status,
-      o.takeout          AS takeout,
-      o.couponUse        AS couponUse
-    FROM Orders o
-    JOIN UserCafe uc
-      ON o.userCafeId = uc.userCafeId
-    WHERE uc.cafeId = #{cafeId}
-    ORDER BY o.createdDate DESC
-  </select>
+	<!-- 카페의 최신 주문 목록 -->
+	<select id="findRecentOrdersForCafe" parameterType="long"
+		resultType="com.cafein.order.OrderDTO">
+		SELECT
+		o.orderId AS orderId,
+		o.merchantUid AS merchantUid,
+		uc.userId AS userId,
+		uc.cafeId AS cafeId,
+		o.paymentMethod AS paymentMethod,
+		o.totalPrice AS totalPrice,
+		o.createdDate AS createdDate,
+		o.status AS status,
+		o.takeout AS takeout,
+		o.couponUse AS couponUse
+		FROM Orders o
+		JOIN UserCafe uc
+		ON o.userCafeId = uc.userCafeId
+		WHERE uc.cafeId = #{cafeId}
+		ORDER BY o.createdDate DESC
+	</select>
+	
+	<!-- 유저의 모든 주문 목록 -->
+	<select id="findAllOrderHistory" parameterType="long"
+		resultType="com.cafein.order.OrderDTO">
+		SELECT
+		o.orderId AS orderId,
+		o.merchantUid AS merchantUid,
+		o.paymentMethod AS paymentMethod,
+		o.totalPrice AS totalPrice,
+		o.createdDate AS createdDate,
+		o.status AS status,
+		o.takeout AS takeout,
+		o.couponUse AS couponUse
+		FROM Orders o
+		WHERE userCafeId = #{userCafeId}
+		ORDER BY o.createdDate DESC
+	</select>
 
-  <!-- 주문별 아이템 목록 (메뉴 이름 포함) -->
-  <select id="findItemsByOrderId" parameterType="long"
-          resultType="com.cafein.order.OrderItemDTO">
-    SELECT
-      oi.orderItemId   AS orderItemId,
-      oi.orderId       AS orderId,
-      oi.menuId        AS menuId,
-      oi.count         AS count,
-      oi.unitPrice     AS unitPrice,
-      m.name           AS menuName
-    FROM OrderItem oi
-    JOIN Menu m ON m.menuId = oi.menuId
-    WHERE oi.orderId = #{orderId}
-    ORDER BY oi.orderItemId
-  </select>
+	<!-- 주문별 아이템 목록 (메뉴 이름 포함) -->
+	<select id="findItemsByOrderId" parameterType="long"
+		resultType="com.cafein.order.OrderItemDTO">
+		SELECT
+		oi.orderItemId AS orderItemId,
+		oi.orderId AS orderId,
+		oi.menuId AS menuId,
+		oi.count AS count,
+		oi.unitPrice AS unitPrice,
+		m.name AS menuName
+		FROM OrderItem oi
+		JOIN Menu m ON m.menuId = oi.menuId
+		WHERE oi.orderId = #{orderId}
+		ORDER BY oi.orderItemId
+	</select>
 
-  <!-- 완료 처리 -->
-  <update id="markDone" parameterType="long">
-    UPDATE Orders
-       SET status = 'Y'
-     WHERE orderId = #{orderId}
-  </update>
-  
-  <!-- Orders 테이블 insert -->
-<insert id="insertOrder" parameterType="com.cafein.order.OrderDTO" useGeneratedKeys="false">
-  <!-- 먼저 시퀀스 NEXTVAL을 가져와 orderId 프로퍼티에 세팅 -->
-  <selectKey keyProperty="orderId" resultType="long" order="BEFORE">
-    SELECT ORDERS_SEQ.NEXTVAL FROM dual
-  </selectKey>
+	<!-- 완료 처리 -->
+	<update id="markDone" parameterType="long">
+		UPDATE Orders
+		SET status = 'Y'
+		WHERE orderId = #{orderId}
+	</update>
 
-  INSERT INTO ORDERS (
-    ORDERID,
-    USERCafeID,
-    PAYMENTMETHOD,
-    TOTALPRICE,
-    CREATEDDATE,
-    STATUS,
-    TAKEOUT,
-    COUPONUSE
-  ) VALUES (
-    #{orderId},                  <!-- 위에서 세팅된 값 -->
-    #{userCafeId,jdbcType=NUMERIC},
-    #{paymentMethod},
-    #{totalPrice},
-    #{createdDate},
-    #{status},
-    #{takeout},
-    #{couponUse}
-  )
-</insert>
+	<!-- Orders 테이블 insert -->
+	<insert id="insertOrder"
+		parameterType="com.cafein.order.OrderDTO" useGeneratedKeys="false">
+		<!-- 먼저 시퀀스 NEXTVAL을 가져와 orderId 프로퍼티에 세팅 -->
+		<selectKey keyProperty="orderId" resultType="long"
+			order="BEFORE">
+			SELECT ORDERS_SEQ.NEXTVAL FROM dual
+		</selectKey>
 
-  <!-- 메뉴 단가 조회 -->
-<select id="findMenuUnitPriceById" parameterType="Long" resultType="Long">
-  SELECT m.price    AS "price"
-  FROM Menu m
-  WHERE m.menuId IN #{id}
-</select>
+		INSERT INTO ORDERS (
+		ORDERID,
+		merchantUid,
+		USERCafeID,
+		PAYMENTMETHOD,
+		TOTALPRICE,
+		CREATEDDATE,
+		STATUS,
+		TAKEOUT,
+		COUPONUSE
+		) VALUES (
+		#{orderId},                  <!-- 위에서 세팅된 값 -->
+		#{merchantUid},
+		#{userCafeId,jdbcType=NUMERIC},
+		#{paymentMethod},
+		#{totalPrice},
+		#{createdDate},
+		#{status},
+		#{takeout},
+		#{couponUse}
+		)
+	</insert>
 
-<!-- 단일 OrderItem insert -->
-<insert id="insertOrderItem" parameterType="com.cafein.order.OrderItemDTO">
-  INSERT INTO ORDERITEM (
-    ORDERITEMID,
-    ORDERID,
-    MENUID,
-    COUNT,
-    UNITPRICE
-  ) VALUES (
-    ORDERITEM_SEQ.NEXTVAL,
-    #{orderId,jdbcType=NUMERIC},   <!-- OrderDTO에서 세팅된 orderId 사용 -->
-    #{menuId,jdbcType=NUMERIC},
-    #{count,jdbcType=NUMERIC},
-    #{unitPrice, jdbcType=NUMERIC}
-  )
-</insert>
+	<!-- 메뉴 단가 조회 -->
+	<select id="findMenuUnitPriceById" parameterType="Long"
+		resultType="Long">
+		SELECT m.price AS "price"
+		FROM Menu m
+		WHERE m.menuId IN #{id}
+	</select>
 
-  <select id="countPendingForCafe" parameterType="long" resultType="int">
-    SELECT COUNT(*)
-    FROM Orders o
-    JOIN UserCafe uc ON o.userCafeId = uc.userCafeId
-    WHERE uc.cafeId = #{cafeId}
-     AND o.status = 'N'
-  </select>
-  
-  <!-- ...기존 mapper 내용 유지... -->
+	<!-- 단일 OrderItem insert -->
+	<insert id="insertOrderItem"
+		parameterType="com.cafein.order.OrderItemDTO">
+		INSERT INTO ORDERITEM (
+		ORDERITEMID,
+		ORDERID,
+		MENUID,
+		COUNT,
+		UNITPRICE
+		) VALUES (
+		ORDERITEM_SEQ.NEXTVAL,
+		#{orderId,jdbcType=NUMERIC},   <!-- OrderDTO에서 세팅된 orderId 사용 -->
+		#{menuId,jdbcType=NUMERIC},
+		#{count,jdbcType=NUMERIC},
+		#{unitPrice, jdbcType=NUMERIC}
+		)
+	</insert>
 
-<!-- 유저+카페 기준으로 주문 음료 총 개수 합산 -->
-  <select id="sumDrinkCountByUserAndCafe" resultType="int">
-    SELECT NVL(SUM(oi.count), 0)
-    FROM Orders o
-    JOIN OrderItem oi ON oi.orderId = o.orderId
-    JOIN UserCafe uc ON uc.userCafeId = o.userCafeId
-    WHERE uc.userId = #{userId}
-     AND uc.cafeId = #{cafeId}
-    -- 취소/삭제 개념이 있으면 여기서 제외 조건 추가
-  </select>
-  
-  <!-- 주문 번호 기준으로 주문 음료 총 개수 합산 -->
-  <select id="sumOrderItemCountByOrderId" resultType="int">
-    SELECT NVL(SUM(oi.count), 0)
-    FROM Orders o
-    JOIN OrderItem oi ON oi.orderId = o.orderId    
-    WHERE oi.orderId = #{orderId}
-  </select>
+	<select id="countPendingForCafe" parameterType="long"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM Orders o
+		JOIN UserCafe uc ON o.userCafeId = uc.userCafeId
+		WHERE uc.cafeId = #{cafeId}
+		AND o.status = 'N'
+	</select>
+
+	<!-- ...기존 mapper 내용 유지... -->
+
+	<!-- 유저+카페 기준으로 주문 음료 총 개수 합산 -->
+	<select id="sumDrinkCountByUserAndCafe" resultType="int">
+		SELECT NVL(SUM(oi.count), 0)
+		FROM Orders o
+		JOIN OrderItem oi ON oi.orderId = o.orderId
+		JOIN UserCafe uc ON uc.userCafeId = o.userCafeId
+		WHERE uc.userId = #{userId}
+		AND uc.cafeId = #{cafeId}
+		-- 취소/삭제 개념이 있으면 여기서 제외 조건 추가
+	</select>
+
+	<!-- 주문 번호 기준으로 주문 음료 총 개수 합산 -->
+	<select id="sumOrderItemCountByOrderId" resultType="int">
+		SELECT NVL(SUM(oi.count), 0)
+		FROM Orders o
+		JOIN OrderItem oi ON oi.orderId = o.orderId
+		WHERE oi.orderId = #{orderId}
+	</select>
+
+	<select id="selectStatusByMerchantUid" parameterType="string"
+		resultType="string">
+		SELECT o.status
+		FROM orders o
+		WHERE o.merchantUid = #{merchantUid}
+		</select>
 
 </mapper>
