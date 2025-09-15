@@ -447,7 +447,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         </div>
 
         <!-- 페이지네이션 -->
-        <div class="pagination-container" id="paginationContainer" style="display: none;">
+        <div class="pagination-container" id="paginationContainer" style="display: none">
           <div class="pagination">
             <button id="prevBtn" class="pagination-btn" onclick="goToPrevPage()">&lt;</button>
             <div class="page-numbers" id="pageNumbers"></div>
@@ -489,7 +489,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
       // 페이지별 게시글 로드 함수
       function loadBoardsPage(page) {
         if (isLoading) return;
-        
+
         // page가 0 이하면 1로 설정
         if (page <= 0) page = 1;
 
@@ -545,7 +545,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
       // 삭제 후 페이지 로드 (빈 페이지면 이전 페이지로)
       function loadBoardsPageAfterDelete(page) {
         if (isLoading) return;
-        
+
         // page가 0 이하면 1로 설정
         if (page <= 0) page = 1;
 
@@ -714,7 +714,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
       // 페이지네이션 네비게이션 함수들
       function goToPage(page) {
-        if (page >= 1 && page <= totalPages && page !== currentPage) {
+        if (page >= 1 && page <= totalPages) {
           // URL 업데이트
           updateURL(page);
           loadBoardsPage(page);
