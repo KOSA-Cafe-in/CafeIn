@@ -67,7 +67,7 @@ public class PaymentService {
             payment.setReceiptUrl(paymentData.get("receipt_url").getAsString());
             
             Date now = new Date();
-            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             payment.setCreatedDate(fmt.format(now));
 
             return payment;

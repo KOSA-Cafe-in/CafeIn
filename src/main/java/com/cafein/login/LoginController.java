@@ -24,8 +24,6 @@ public class LoginController {
             return "redirect:/error/error?message=" + "잘못된 접근입니다. 올바른 경로로 접근해주세요.";
         }
         
-	    System.out.println("카페 ID: " + cafeId);
-	    
         try {
             // CafeService의 findCafeById로 카페 정보 조회
             CafeDTO cafe = cafeService.findCafeById(cafeId);
@@ -35,14 +33,11 @@ public class LoginController {
                 model.addAttribute("cafe", cafe);
                 model.addAttribute("cafeId", cafeId);
                 
-                System.out.println("카페 정보 조회 성공: " + cafe.getName());
             } else {
-                System.out.println("카페를 찾을 수 없습니다: " + cafeId);
                 return "redirect:/error/error?message=" + "존재하지 않는 카페입니다.";
             }
             
         } catch (Exception e) {
-            System.out.println("카페 정보 조회 오류: " + e.getMessage());
             return "redirect:/error/error?message=" + "카페 정보를 불러오는데 실패했습니다.";
         }
         
