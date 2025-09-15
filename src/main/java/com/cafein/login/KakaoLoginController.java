@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cafein.security.KakaoOAuth2Service;
+import com.cafein.stamp.StampService;
 import com.cafein.user.UserDTO;
 import com.cafein.user.UserService;
 import com.cafein.usercafe.UserCafeDTO;
@@ -33,6 +34,9 @@ public class KakaoLoginController {
 	
 	@Autowired
 	private KakaoOAuth2Service kakaoOAuth2Service;
+	
+	@Autowired
+	private StampService stampService;
     
 	// 카카오 로그인 시작
 	@GetMapping("/login")
@@ -70,6 +74,10 @@ public class KakaoLoginController {
 	        
 	        // DB에서 사용자 역할 조회
 	        UserCafeDTO userCafe = userCafeService.findUserCafeByUserAndCafe(user.getUserId(), cafeId);
+	        
+	        if(stampService.findStampByUserCafeId(userCafe.getUserCafeId()) == null && !userCafe.getRole().equals("MANAGER")) {
+	        	stampService.createStamp(userCafe.getUserCafeId(), 0, 2000);
+	        }	        
 	        
 	        // 세션에 필요한 정보만 저장
 			session.setAttribute("userId", user.getUserId());

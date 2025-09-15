@@ -86,10 +86,20 @@
     <!-- 쿠폰 -->
     <section class="coupon-wrap">
       <div class="coupon-label">쿠폰</div>
-      <div class="coupon-pill ${couponApplied ? 'active' : ''}" id="couponPill" role="button" tabindex="0">
-        <span>2000원 할인 쿠폰</span>
-        <span class="coupon-check">✓</span>
-      </div>
+      <c:choose>
+        <c:when test="${stamp.stampCount >= 10}">
+          <div class="coupon-pill ${couponApplied ? 'active' : ''}" id="couponPill" role="button" tabindex="0">
+            <span>2000원 할인 쿠폰</span>
+            <span class="coupon-check">✓</span>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <div class="coupon-pill" style="background: #f3f4f6; color: #9ca3af; cursor: not-allowed;">
+            <span>스탬프 10개 모으면 쿠폰 획득</span>
+            <span style="font-size: 12px;">${stamp.stampCount}/10</span>
+          </div>
+        </c:otherwise>
+      </c:choose>
     </section>
   </main>
 
@@ -218,8 +228,10 @@ function refreshTotals(){
   });
   document.getElementById('itemCount').textContent = cnt;
 
-  // 쿠폰 적용 여부 확인
-  const couponApplied = document.getElementById('couponPill').classList.contains('active');
+  // 쿠폰 적용 여부 확인 (사용 가능한 쿠폰인지도 체크)
+  const couponPill = document.getElementById('couponPill');
+  const couponApplied = couponPill && couponPill.hasAttribute('role') && couponPill.classList.contains('active');
+  
   if(couponApplied && total >= 2000){
     total -= 2000;
     document.getElementById('orderText').textContent = fmt(total)+'원 주문하기 (쿠폰 적용)';
@@ -282,19 +294,27 @@ document.getElementById('orderType').addEventListener('click',(e)=>{
 const couponPill = document.getElementById('couponPill');
 
 function applyCoupon(){
+  // 쿠폰이 사용 가능한지 확인 (role 속성이 있는지 체크)
+  if (!couponPill || !couponPill.hasAttribute('role')) {
+    return; // 쿠폰 사용 불가능하면 아무것도 하지 않음
+  }
+  
   couponPill.classList.toggle('active');
   document.getElementById('couponAppliedInput').value =
     couponPill.classList.contains('active') ? 'Y' : 'N';
   refreshTotals(); // 쿠폰 적용 시 합계 다시 계산
 }
 
-couponPill.addEventListener('click', applyCoupon);
-couponPill.addEventListener('keydown', (e)=>{
-  if(e.key==='Enter'||e.key===' '){
-    e.preventDefault();
-    applyCoupon();
-  }
-});
+// 쿠폰이 존재하고 사용 가능한 경우에만 이벤트 리스너 추가
+if (couponPill && couponPill.hasAttribute('role')) {
+  couponPill.addEventListener('click', applyCoupon);
+  couponPill.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      applyCoupon();
+    }
+  });
+}
 
 /* === 체크아웃: cart JSON 담아서 서버로 전송 === */
 document.getElementById('checkoutForm').addEventListener('submit', (e)=>{
@@ -327,4 +347,138 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 </body>
+</html>
+대비 간단 이스케이프 */
+      function escapeHtml(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
+        );
+      }
+
+      /* === 합계/개수 === */
+      function refreshTotals() {
+        const items = Array.from(document.querySelectorAll('.item'));
+        let total = 0,
+          cnt = 0;
+        items.forEach((it) => {
+          const price = Number(it.dataset.price || 0);
+          const q = Number(it.querySelector('.count')?.textContent || 0);
+          total += price * q;
+          cnt += q;
+        });
+        document.getElementById('itemCount').textContent = cnt;
+
+        // 쿠폰 적용 여부 확인
+        const couponApplied = document.getElementById('couponPill').classList.contains('active');
+        if (couponApplied && total >= 2000) {
+          total -= 2000;
+          document.getElementById('orderText').textContent = fmt(total) + '원 주문하기 (쿠폰 적용)';
+        } else {
+          document.getElementById('orderText').textContent = fmt(total) + '원 주문하기';
+        }
+      }
+
+      function updateQty(menuId, delta) {
+        const cart = cartLoad();
+        const k = String(menuId);
+        const it = cart.items[k];
+        if (!it) return;
+
+        const next = Math.max(0, Math.min(99, (Number(it.qty) || 0) + delta));
+        if (next === 0) delete cart.items[k];
+        else cart.items[k].qty = next;
+
+        cartSave(cart);
+        renderCart();
+      }
+
+      function removeItem(menuId) {
+        const cart = cartLoad();
+        delete cart.items[String(menuId)];
+        cartSave(cart);
+        renderCart();
+      }
+
+      const cartEl = document.getElementById('cart');
+      cartEl.addEventListener('click', (e) => {
+        const t = e.target instanceof Element ? e.target : e.target && e.target.parentElement;
+        if (!t) return;
+
+        const btn = t.closest('button');
+        if (!btn) return;
+
+        const itemEl = t.closest('.item');
+        if (!itemEl) return;
+
+        const menuId = itemEl.dataset.menuId;
+        const act = btn.dataset.act;
+
+        if (act === 'inc') updateQty(menuId, +1);
+        else if (act === 'dec') updateQty(menuId, -1);
+        else if (act === 'remove') removeItem(menuId);
+      });
+
+      /* === 주문 유형 토글 → hidden input 반영 === */
+      document.getElementById('orderType').addEventListener('click', (e) => {
+        const opt = e.target.closest('.option');
+        if (!opt) return;
+        document
+          .querySelectorAll('#orderType .option')
+          .forEach((o) => o.classList.remove('active'));
+        opt.classList.add('active');
+        document.getElementById('orderTypeInput').value = opt.dataset.type; // Y | N
+      });
+
+      /* === 쿠폰 토글 → hidden input 반영 === */
+      const couponPill = document.getElementById('couponPill');
+
+      function applyCoupon() {
+        couponPill.classList.toggle('active');
+        document.getElementById('couponAppliedInput').value = couponPill.classList.contains(
+          'active'
+        )
+          ? 'Y'
+          : 'N';
+        refreshTotals(); // 쿠폰 적용 시 합계 다시 계산
+      }
+
+      couponPill.addEventListener('click', applyCoupon);
+      couponPill.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          applyCoupon();
+        }
+      });
+
+      /* === 체크아웃: cart JSON 담아서 서버로 전송 === */
+      document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+        const { items } = cartLoad();
+        const entries = Object.entries(items);
+
+        if (entries.length === 0) {
+          e.preventDefault();
+          alert('장바구니가 비어있습니다.');
+          return;
+        }
+
+        const couponApplied = document.getElementById('couponAppliedInput').value === 'Y';
+
+        const rows = entries.map(([menuId, it]) => ({
+          menuId: Number(menuId),
+          name: it.name,
+          price: Number(it.price) || 0,
+          qty: Number(it.qty) || 0,
+        }));
+
+        console.log('장바구니 데이터:', rows);
+        document.getElementById('cartJson').value = JSON.stringify(rows);
+      });
+
+      // 페이지 로드 시 장바구니 렌더링
+      document.addEventListener('DOMContentLoaded', function () {
+        renderCart();
+      });
+    </script>
+  </body>
 </html>

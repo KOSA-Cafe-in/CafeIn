@@ -41,7 +41,7 @@
       display:flex; justify-content:center;
     }
     .btn{
-      width:min(440px, 92%);
+      width:min(380px, 86%);
       padding:14px 16px; border:none; border-radius:14px;
       font-size:16px; font-weight:700; cursor:pointer;
       background:#222; color:#fff;

@@ -15,7 +15,7 @@ public class OrderController {
         if("MANAGER".equals(role)) {
         	return "redirect:/admin/orders";
         } else if("CUSTOMER".equals(role)) {
-        	return "redirect:/user/orders";
+        	return "redirect:/payment/success";
         } else {
         	// 알 수 없는 역할인 경우 로그아웃 후 로그인 페이지로
         	return "redirect:/logout";

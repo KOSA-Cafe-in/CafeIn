@@ -30,4 +30,5 @@ public interface OrderMapper {
     
     void insertOrderItem(OrderItemDTO item);
 
+    int sumOrderItemCountByOrderId(long orderId);
 }
