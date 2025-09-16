@@ -32,4 +32,3 @@ public interface BoardMapper {
     );
 	int getTotalBoardCount(@Param("cafeId") Long cafeId);	// 카페별 전체 게시글 수
 }
-}
