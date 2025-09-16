@@ -104,8 +104,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Transactional(readOnly = true)
-	public String getCurrentStatusByMerchantUid(String merchantUid) {
-	String status = orderMapper.selectStatusByMerchantUid(merchantUid);
+	public String getCurrentStatusByOrderId(Long orderId) {
+	String status = orderMapper.selectStatusByOrderId(orderId);
 	return status != null ? status : "N";
 	}
 

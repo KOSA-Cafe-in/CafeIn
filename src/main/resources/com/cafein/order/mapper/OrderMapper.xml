@@ -152,11 +152,11 @@
 		WHERE oi.orderId = #{orderId}
 	</select>
 
-	<select id="selectStatusByMerchantUid" parameterType="string"
+	<select id="selectStatusByOrderId" parameterType="Long"
 		resultType="string">
 		SELECT o.status
 		FROM orders o
-		WHERE o.merchantUid = #{merchantUid}
+		WHERE o.orderId = #{orderId}
 		</select>
 
 	<!-- Fetch order details by order ID -->

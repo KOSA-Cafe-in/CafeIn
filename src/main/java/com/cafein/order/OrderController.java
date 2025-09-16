@@ -46,8 +46,8 @@ public class OrderController {
 	}
 	
 	@GetMapping("/order/status")
-    public ResponseEntity<Map<String, String>> getStatus(@RequestParam("merchantUid") String merchantUid) {
-        String status = orderService.getCurrentStatusByMerchantUid(merchantUid);
+    public ResponseEntity<Map<String, String>> getStatus(@RequestParam("orderId") Long orderId) {
+        String status = orderService.getCurrentStatusByOrderId(orderId);
         return ResponseEntity.ok(java.util.Collections.singletonMap("status", status)); // {"status":"Y"|"N"}
     }
 
