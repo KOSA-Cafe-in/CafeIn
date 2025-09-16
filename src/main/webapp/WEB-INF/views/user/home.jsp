@@ -6,7 +6,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>토스 카페</title>
+<title>리틀리</title>
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ffffff" />

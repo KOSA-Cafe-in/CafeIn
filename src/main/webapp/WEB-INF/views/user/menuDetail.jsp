@@ -7,7 +7,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>토스 카페 - ${menu.name}</title>
+<title>리틀리 - ${menu.name}</title>
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <%@ include file="/WEB-INF/views/common/head.jsp"%>
