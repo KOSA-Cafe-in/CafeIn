@@ -645,8 +645,10 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         // 현재 사용자가 매니저이거나 게시글 작성자인 경우 메뉴 표시
         const currentUserId = '${userCafe.userId}';
         const currentRole = '${userCafe.role}';
-        const isOwner = board.userId === currentUserId;
+        const isOwner = board.userId.toString() === currentUserId;
         const isManager = currentRole === 'MANAGER';
+        
+        console.log(isOwner, isManager, board.userId, currentUserId);
 
         let menuHtml = '';
         if (isOwner || isManager) {
