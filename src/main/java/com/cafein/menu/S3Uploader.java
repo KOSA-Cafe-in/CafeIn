@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.UUID;
 
+// S3 파일 업로드 서비스 (담당 : 손윤찬)
 @Slf4j
 @Component
 public class S3Uploader {
@@ -29,6 +30,7 @@ public class S3Uploader {
 
     private AmazonS3 s3Client;
 
+    // AWS S3 클라이언트 초기화
     @PostConstruct
     public void initializeAmazon() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -38,6 +40,7 @@ public class S3Uploader {
                 .build();
     }
 
+    //  S3 파일 업로드
     public String upload(MultipartFile file, String dirName) throws IOException {
         String fileName = dirName + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
@@ -47,7 +50,7 @@ public class S3Uploader {
         return s3Client.getUrl(bucket, fileName).toString(); // S3 URL
     }
 
-    // ✅ S3 객체 삭제 (URL을 받아 내부에서 key 추출)
+    //  S3 객체 삭제 (URL을 받아 내부에서 key 추출)
     public void delete(String fileUrl) {
         try {
             String key = extractKeyFromUrl(fileUrl);
@@ -59,7 +62,7 @@ public class S3Uploader {
         }
     }
 
-    // ✅ URL에서 S3 key 추출
+    //  URL에서 S3 key 추출
     private String extractKeyFromUrl(String url) {
         // 예: https://{bucket}.s3.{region}.amazonaws.com/menu/abc.jpg → menu/abc.jpg
         String base1 = "https://" + bucket + ".s3." + region + ".amazonaws.com/";

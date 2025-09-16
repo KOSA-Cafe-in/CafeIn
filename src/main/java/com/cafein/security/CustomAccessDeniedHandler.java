@@ -9,8 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+// 커스텀 접근 거부 핸들러 (담당 : 나규태)
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-
+    // 접근 거부 시 처리 메서드
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {

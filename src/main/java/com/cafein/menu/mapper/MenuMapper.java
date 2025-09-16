@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import com.cafein.menu.MenuDTO;
 import java.util.List;
 
+// 메뉴 MyBatis 매퍼 인터페이스 (담당 : 손윤찬)
 @Mapper
 public interface MenuMapper {
 

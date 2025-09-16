@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <%@ taglib
 uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> <%@ page session="false" %> <%@ page
 language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!-- 게시판 (담당 : 나규태) -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -647,7 +648,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         const currentRole = '${userCafe.role}';
         const isOwner = board.userId.toString() === currentUserId;
         const isManager = currentRole === 'MANAGER';
-        
+
         console.log(isOwner, isManager, board.userId, currentUserId);
 
         let menuHtml = '';

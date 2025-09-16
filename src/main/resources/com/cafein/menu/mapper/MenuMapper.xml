@@ -3,6 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cafein.menu.mapper.MenuMapper">
 
+<!-- 인터페이스와 매칭되는 쿼리 추가 (담당 : 손윤찬) -->
   <!-- 메뉴 등록 -->
   <insert id="createMenu" parameterType="com.cafein.menu.MenuDTO">
     INSERT INTO Menu (

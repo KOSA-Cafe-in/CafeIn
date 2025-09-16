@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cafein.cafe.CafeDTO;
 import com.cafein.cafe.CafeService;
 
+// 로그인 컨트롤러 (담당 : 나규태)
 @Controller
 public class LoginController {
 	
 	@Autowired
 	private CafeService cafeService;
 
+    // 로그인 페이지
     @GetMapping("/login")
     public String login(@RequestParam(value = "cafeId", required = false) Long cafeId, Model model) {
         // cafeId 파라미터가 없으면 에러페이지로 리다이렉트
@@ -44,6 +46,7 @@ public class LoginController {
         return "login"; // /WEB-INF/views/login.jsp
     }
 
+    // 로그아웃 처리
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         // 로그아웃 전에 카페 정보 저장

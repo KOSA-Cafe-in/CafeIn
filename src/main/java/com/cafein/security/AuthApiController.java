@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// 인증 API 컨트롤러 (담당 : 나규태)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthApiController {

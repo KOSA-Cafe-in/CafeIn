@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+// 메뉴 비즈니스 로직 구현 클래스 (담당 : 손윤찬)
 @Service
 public class MenuServiceImpl implements MenuService {
 
@@ -17,15 +18,19 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private S3Uploader s3Uploader;
 
+    // 전체 메뉴 조회
     @Override
     public List<MenuDTO> getAllMenus() {
         return menuMapper.findAll();
     }
+
+    // 메뉴 ID로 단일 메뉴 조회
     @Override
     public MenuDTO getMenuById(Long menuId) {
         return menuMapper.findMenuById(menuId);
     }
     
+    // 메뉴 생성
     @Override
     public void createMenu(MenuDTO dto, MultipartFile imageFile) throws Exception {
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -37,16 +42,19 @@ public class MenuServiceImpl implements MenuService {
         menuMapper.createMenu(dto);
     }
 
+    // 홈에서 메뉴 목록 조회용
     @Override
     public List<MenuDTO> findAll() {
         return menuMapper.findAllMenus();
     }
 
+    // 메뉴 ID로 단일 메뉴 조회
     @Override
     public MenuDTO findById(Long id) {
         return menuMapper.findMenuById(id);
     }
 
+    // 메뉴 수정
     @Override
     public void updateMenu(MenuDTO dto, MultipartFile imageFile) throws Exception {
         // 새 이미지를 업로드한 경우에만 URL 갱신
@@ -58,6 +66,7 @@ public class MenuServiceImpl implements MenuService {
         menuMapper.updateMenu(dto);
     }
 
+    // 메뉴 삭제 (소프트 삭제)
     @Override
     public void deleteMenu(Long id) {
         // 1) 이미지 URL 확보
