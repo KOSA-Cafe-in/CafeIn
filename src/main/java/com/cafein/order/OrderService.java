@@ -21,7 +21,7 @@ public interface OrderService {
 
     int sumOrderItemCountByOrderId(long orderId);
     
-    public String getCurrentStatusByMerchantUid(String merchantUid);
+    public String getCurrentStatusByOrderId(Long orderId);
 
     OrderDTO findOrderById(Long orderId);
 

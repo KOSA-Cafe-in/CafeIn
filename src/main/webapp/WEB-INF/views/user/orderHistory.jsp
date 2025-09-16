@@ -1,128 +1,192 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <%@ include file="/WEB-INF/views/common/head.jsp"%>
-  <title>주문 내역</title>
-  <style>
-    :root{
-      /* home.jsp와 같은 프레임 비율/톤으로 맞춤 */
-      --phone-w: 9;   /* 필요 시 home.jsp 값으로 교체 */
-      --phone-h: 16;
+    <%@ include file="/WEB-INF/views/common/head.jsp" %>
+    <title>주문 내역</title>
+    <style>
+        .container { padding: 16px 18px 90px; }
+        .page-title { font-size: 22px; font-weight: 800; margin: 8px 0 16px; }
 
-      --bg:#f9fafb; --card:#ffffff; --text:#0f172a; --muted:#6b7280; --border:#e5e7eb;
-      --accent:#2563eb;
-      --ok-bg:#ecfdf5; --ok:#065f46;
-      --ing-bg:#eef2ff; --ing:#3730a3;
-    }
+        /* 카드 스타일 */
+        .order-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .order-card:hover {
+            background: #f9fafb;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
 
-    /* Phone frame (home.jsp와 동일 컨셉) */
-    .phone { max-width:430px; }
-    .phone-shell{
-      position:relative; border:1px solid var(--border); border-radius:28px;
-      background:var(--card); box-shadow:0 12px 30px rgba(0,0,0,.08); overflow:hidden;
-      aspect-ratio: calc(var(--phone-w) / var(--phone-h));
-    }
-    @supports not (aspect-ratio: 1/1){
-      .phone-shell::before{ content:""; display:block; padding-top:calc(var(--phone-h)/var(--phone-w)*100%); }
-    }
-    .phone-inner{ position:absolute; inset:0; display:flex; flex-direction:column; background:var(--bg); }
+        /* 헤더 */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .order-id {
+            font-weight: 700;
+            font-size: 16px;
+            color: #111;
+        }
 
-    /* 본문(리스트) */
-    .content{ flex:1 1 auto; overflow:auto; padding:8px 8px 12px; }
-    .empty{ text-align:center; color:#9ca3af; padding:36px 0; }
+        /* 상태 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 70px;
+            text-align: center;
+        }
+        .status-preparing { background: #FEF3C7; color: #D97706; }
+        .status-complete  { background: #D1FAE5; color: #065F46; }
 
-    .list{ display:flex; flex-direction:column; }
-    a.row{
-      display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;
-      padding:14px 12px; border-bottom:1px solid var(--border); background:transparent;
-    }
-    a.row:active{ background:#f3f4f6; }
-    .info{ flex:1; min-width:0; }
-    .title{ font-weight:800; font-size:15px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .meta{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .dot{ margin:0 6px; }
-    .status{ font-size:12px; padding:4px 10px; border-radius:999px; border:1px solid transparent; flex:0 0 auto; }
-    .done{ background:var(--ok-bg); color:var(--ok); }
-    .ing { background:var(--ing-bg); color:var(--ing); }
+        /* 날짜 */
+        .order-date {
+            font-size: 13px;
+            color: #6B7280;
+            margin-top: 4px;
+            display: block;
+        }
 
-    /* 하단 탭(nav) — home.jsp 구조 재현 */
-    .tabbar{
-      flex:0 0 auto;
-      background:var(--card); border-top:1px solid var(--border);
-      display:grid; grid-template-columns:repeat(4,1fr); gap:4px; padding:8px 6px;
-    }
-    .tab{ text-align:center; font-size:11px; color:#6b7280; text-decoration:none; padding:6px 4px; }
-    .tab .ico{ font-size:20px; display:block; margin-bottom:4px; }
-    .tab.active{ color:var(--accent); font-weight:700; }
-  </style>
+        .empty {
+            padding: 28px;
+            text-align: center;
+            color: #6B7280;
+            background:#fff;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+        }
+    </style>
 </head>
 <body>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<main class="phone">
+    <!-- 공통 헤더 -->
+    <jsp:include page="/WEB-INF/views/common/header.jsp">
+        <jsp:param name="backLink" value="true" />
+        <jsp:param name="title" value="주문 내역" />
+        <jsp:param name="showOrderHistory" value="false" />
+    </jsp:include>
 
-<div class="phone">
-		<!-- 헤더 include -->
-		<jsp:include page="/WEB-INF/views/common/header.jsp">
-            <jsp:param name="backLink" value="true" />
-			<jsp:param name="title" value="메뉴" />
-			<jsp:param name="showOrderHistory" value="false" />
-		</jsp:include>
+    <div class="container">
+            <c:choose>
+            <c:when test="${empty orders}">
+                <div class="empty">주문 내역이 없습니다.</div>
+            </c:when>
+            <c:otherwise>
+                <c:forEach var="o" items="${orders}">
+                    <div class="order-card order-row"
+                         data-order-id="${o.orderId}"
+                         data-status="${o.status}"
+                         onclick="location.href='${pageContext.request.contextPath}/orderHistoryDetail/${o.orderId}'">
+                        <div class="order-header">
+                            <span class="order-id">주문번호  ${o.orderId}번</span>
+                            <span class="status-badge ${o.status == 'Y' ? 'status-complete' : 'status-preparing'}">
+                                <c:choose>
+                                    <c:when test="${o.status == 'Y'}">제조완료</c:when>
+                                    <c:otherwise>준비중</c:otherwise>
+                                </c:choose>
+                            </span>
+                        </div>
+                        <span class="order-date">
+                            <fmt:formatDate value="${o.createdDate}" pattern="yyyy-MM-dd HH:mm" />
+                        </span>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
 
-      <!-- ✅ main: 주문 정보 + 상태만 노출 -->
-      <main class="content">
-        <c:if test="${empty orders}">
-          <div class="empty">주문 내역이 없습니다.</div>
-        </c:if>
+    <!-- 하단 네비 -->
+    <jsp:include page="/WEB-INF/views/common/nav.jsp">
+        <jsp:param name="active" value="orders" />
+    </jsp:include>
+</main>
 
-        <div class="list">
-          <c:forEach var="o" items="${orders}">
-            <a class="row" href="${ctx}/orderHistoryDetail/${o.orderId}" data-merchant-uid="${o.merchantUid}">
-              <div class="info">
-                <div class="title">주문 #${o.orderId}</div>
-                <div class="meta">
-                  <fmt:formatDate value="${o.createdDate}" pattern="yyyy-MM-dd HH:mm"/>
-                  <span class="dot">·</span>
-                  <fmt:formatNumber value="${o.totalPrice}" type="number"/>원
-                </div>
-              </div>
-              <span class="status ${o.status == 'Y' ? 'done' : 'ing'}">
-                <c:choose>
-                  <c:when test="${o.status == 'Y'}">제조완료</c:when>
-                  <c:otherwise>제조중</c:otherwise>
-                </c:choose>
-              </span>
-            </a>
-          </c:forEach>
-        </div>
-      </main>
-
-		<!-- 하단 네비게이션 include -->
-		<jsp:include page="/WEB-INF/views/common/nav.jsp">
-			<jsp:param name="active" value="home" />
-		</jsp:include>
-</div>
-
+<!-- 🟢 상태 폴링 스크립트 (orderId 기반) -->
 <script>
-  setInterval(function(){
-    document.querySelectorAll('[data-merchant-uid]').forEach(function(row){
-      var uid = row.getAttribute('data-merchant-uid');
-      if(!uid) return;
-      fetch('${ctx}/order/status?merchantUid=' + encodeURIComponent(uid))
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-          if(!d) return;
-          var badge = row.querySelector('.status');
-          var done = d.status === 'Y';
-          badge.textContent = done ? '제조완료' : '제조중';
-          badge.classList.toggle('done', done);
-          badge.classList.toggle('ing', !done);
-        }).catch(()=>{});
-    });
-  }, 10000);
+(function() {
+  const ctx = '${pageContext.request.contextPath}';
+  const rows = Array.from(document.querySelectorAll('.order-row'));
+  if (!rows.length) return;
+
+  const BASE_INTERVAL = 5000;  // 5초 간격
+  const BG_INTERVAL   = 12000; // 백그라운드 시 12초
+  let timer;
+
+  async function fetchStatus(orderId) {
+    try {
+      if (!orderId) return null;
+      const res = await fetch(ctx + '/order/status?orderId=' + encodeURIComponent(orderId), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json(); // {status:"Y"|"N"}
+    } catch (e) {
+      console.warn('[orderHistory] status fetch failed:', e);
+      return null;
+    }
+  }
+
+  function applyRowUI(row, status) {
+    const badge = row.querySelector('.status-badge');
+    if (!badge) return;
+    if (status === 'Y') {
+      badge.textContent = '제조완료';
+      badge.classList.remove('status-preparing');
+      badge.classList.add('status-complete');
+      row.dataset.status = 'Y';
+    } else {
+      badge.textContent = '준비중';
+      badge.classList.remove('status-complete');
+      badge.classList.add('status-preparing');
+      row.dataset.status = 'N';
+    }
+  }
+
+  async function tick() {
+    await Promise.all(rows.map(async (row) => {
+      const orderId = row.dataset.orderId;
+      const current = row.dataset.status || '';
+      const data = await fetchStatus(orderId);
+      if (data && typeof data.status === 'string') {
+        const next = data.status.trim();
+        if (next !== current) {
+          applyRowUI(row, next);
+        }
+      }
+    }));
+    scheduleNext();
+  }
+
+  function scheduleNext() {
+    const interval = document.hidden ? BG_INTERVAL : BASE_INTERVAL;
+    timer = setTimeout(tick, interval);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      clearTimeout(timer);
+      tick(); // 탭 돌아오면 즉시 한 번 확인
+    }
+  });
+
+  // 시작
+  scheduleNext();
+})();
 </script>
 </body>
 </html>

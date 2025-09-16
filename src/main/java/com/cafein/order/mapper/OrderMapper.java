@@ -22,7 +22,7 @@ public interface OrderMapper {
     int markDone(@Param("orderId") Long orderId);
     
     
-    String selectStatusByMerchantUid(@Param("merchantUid") String merchantUid);
+    String selectStatusByOrderId(@Param("orderId") Long orderId);
     
     void insertOrder(OrderDTO orderDTO);
 
