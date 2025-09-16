@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <%@ page session="false" %> <%@
 page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!-- 에러페이지 (담당 : 나규태) -->
 <!DOCTYPE html>
 <html lang="ko">
   <head>

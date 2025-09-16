@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 게시판 MyBatis 매퍼 XML (담당 : 나규태) -->
 <mapper namespace="com.cafein.board.mapper.BoardMapper">
 	<!-- 특정 카페 게시글 전체조회 -->
 	<select id="findAllBoardList" resultType="com.cafein.board.BoardDTO" parameterType="long">
