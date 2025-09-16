@@ -80,7 +80,7 @@
 
         <div class="list">
           <c:forEach var="o" items="${orders}">
-            <a class="row" href="${ctx}/orderhistoryDetail/${o.orderId}" data-merchant-uid="${o.merchantUid}">
+            <a class="row" href="${ctx}/orderHistoryDetail/${o.orderId}" data-merchant-uid="${o.merchantUid}">
               <div class="info">
                 <div class="title">주문 #${o.orderId}</div>
                 <div class="meta">

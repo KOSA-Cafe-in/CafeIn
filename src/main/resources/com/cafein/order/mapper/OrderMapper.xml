@@ -159,4 +159,33 @@
 		WHERE o.merchantUid = #{merchantUid}
 		</select>
 
+	<!-- Fetch order details by order ID -->
+	<select id="findOrderById" parameterType="long" resultType="com.cafein.order.OrderDTO">
+    SELECT
+        o.orderId AS orderId,
+        o.merchantUid AS merchantUid,
+        o.paymentMethod AS paymentMethod,
+        o.totalPrice AS totalPrice,
+        o.createdDate AS createdDate,
+        o.status AS status,
+        o.takeout AS takeout,
+        o.couponUse AS couponUse
+    FROM Orders o
+    WHERE o.orderId = #{orderId}
+</select>
+
+<!-- Fetch payment details by order ID -->
+<select id="findPaymentByOrderId" parameterType="long" resultType="com.cafein.payment.PaymentDTO">
+    SELECT
+        p.paymentId AS paymentId,
+        p.merchantUid AS merchantUid,
+        p.amount AS amount,
+        p.paymentMethod AS paymentMethod,
+        p.createdDate AS createdDate,
+        p.status AS status
+    FROM Payments p
+    JOIN Orders o ON p.merchantUid = o.merchantUid
+    WHERE o.orderId = #{orderId}
+</select>
+
 </mapper>

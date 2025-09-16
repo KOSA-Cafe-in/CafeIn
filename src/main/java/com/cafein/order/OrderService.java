@@ -22,4 +22,10 @@ public interface OrderService {
     int sumOrderItemCountByOrderId(long orderId);
     
     public String getCurrentStatusByMerchantUid(String merchantUid);
+
+    OrderDTO findOrderById(Long orderId);
+
+    PaymentDTO findPaymentByOrderId(Long orderId);
+    
+	List<OrderItemDTO> findItemsByOrderId(Long orderId);
 }
