@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.cafein.order.OrderDTO;
 import com.cafein.order.OrderItemDTO;
+import com.cafein.payment.PaymentDTO;
 
 public interface OrderMapper {
 
@@ -36,4 +37,8 @@ public interface OrderMapper {
     void insertOrderItem(OrderItemDTO item);
 
     int sumOrderItemCountByOrderId(long orderId);
+
+    OrderDTO findOrderById(@Param("orderId") Long orderId);
+
+    PaymentDTO findPaymentByOrderId(@Param("orderId") Long orderId);
 }

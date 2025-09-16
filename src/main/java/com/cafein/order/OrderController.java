@@ -1,5 +1,6 @@
 package com.cafein.order;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -9,7 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.cafein.payment.PaymentDTO;
 
 @Controller
 public class OrderController {
@@ -33,12 +37,12 @@ public class OrderController {
 	}
 	
 	@GetMapping("/user/orderHistory")
-	public String orderHistory(HttpSession session, Model model) 
+	public String orderHistory(HttpSession session, Model model)
 	{
 		long userCafeId = (Long) session.getAttribute("userCafeId");
 		java.util.List<OrderDTO> orders = orderService.findAllOrderHistory(userCafeId);
 	    model.addAttribute("orders", orders);
-	    return "user/orderHistory";
+	    return "/user/orderHistory";
 	}
 	
 	@GetMapping("/order/status")
@@ -46,4 +50,18 @@ public class OrderController {
         String status = orderService.getCurrentStatusByMerchantUid(merchantUid);
         return ResponseEntity.ok(java.util.Collections.singletonMap("status", status)); // {"status":"Y"|"N"}
     }
+
+	@GetMapping("/orderHistoryDetail/{orderId}")
+	public String orderHistoryDetail(@PathVariable("orderId") Long orderId, Model model) {
+	    // Fetch order and payment details by orderId
+	    OrderDTO order = orderService.findOrderById(orderId);
+	    order.setItems(orderService.findItemsByOrderId(orderId));
+	    //PaymentDTO payment = orderService.findPaymentByOrderId(orderId);
+
+	    // Add data to the model
+	    model.addAttribute("order", order);
+	    //model.addAttribute("payment", payment);
+
+	    return "/user/orderHistoryDetail";
+	}
 }
