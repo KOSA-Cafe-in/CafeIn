@@ -108,4 +108,20 @@ public class OrderServiceImpl implements OrderService {
 	String status = orderMapper.selectStatusByMerchantUid(merchantUid);
 	return status != null ? status : "N";
 	}
+
+	@Override
+	public OrderDTO findOrderById(Long orderId) {
+		return orderMapper.findOrderById(orderId);
+	}
+
+	@Override
+	public PaymentDTO findPaymentByOrderId(Long orderId) {
+		return orderMapper.findPaymentByOrderId(orderId);
+	}
+	
+	@Override
+	public List<OrderItemDTO> findItemsByOrderId(Long orderId)
+	{
+		return orderMapper.findItemsByOrderId(orderId);
+	}
 }
