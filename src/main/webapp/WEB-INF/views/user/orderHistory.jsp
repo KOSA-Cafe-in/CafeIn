@@ -79,7 +79,11 @@
         <jsp:param name="showOrderHistory" value="false" />
     </jsp:include>
 
+<<<<<<< HEAD
+    <div class="container">
+=======
     <div class="content">
+>>>>>>> main
             <c:choose>
             <c:when test="${empty orders}">
                 <div class="empty">주문 내역이 없습니다.</div>
