@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 사용자 MyBatis 매퍼 XML (담당 : 나규태) -->
 <mapper namespace="com.cafein.user.mapper.UserMapper">
 	<!-- userId로 조회 (Long userId) -->
 	<select id="findUserById" resultType="com.cafein.user.UserDTO" parameterType="long">

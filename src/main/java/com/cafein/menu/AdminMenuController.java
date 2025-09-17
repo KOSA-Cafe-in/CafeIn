@@ -18,6 +18,7 @@ import java.util.Objects;
 import com.cafein.order.OrderDTO;
 import com.cafein.order.OrderService;
 
+// 관리자 메뉴 컨트롤러 (담당 : 손윤찬)
 @Controller
 @RequestMapping("/admin") // ✅ 클래스 레벨을 /admin 으로 통합
 public class AdminMenuController {

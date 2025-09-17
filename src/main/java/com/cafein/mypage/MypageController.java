@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cafein.cafe.CafeDTO;
 import com.cafein.cafe.CafeService;
-import com.cafein.order.OrderService;   // ✅ 추가
+import com.cafein.order.OrderService; 
 import com.cafein.stamp.StampDTO;
 import com.cafein.stamp.StampService;
 import com.cafein.user.UserDTO;
@@ -19,6 +19,7 @@ import com.cafein.user.UserService;
 import com.cafein.usercafe.UserCafeDTO;
 import com.cafein.usercafe.UserCafeService;
 
+// 마이페이지 컨트롤러 (담당 : 나규태, 손윤찬)
 @Controller
 public class MypageController {
 
@@ -32,7 +33,7 @@ public class MypageController {
     private CafeService cafeService;
 
     @Autowired
-    private OrderService orderService;   // ✅ 추가: 음료 총 수량 계산용
+    private OrderService orderService;   
     
     @Autowired
     private StampService stampService;
@@ -44,6 +45,7 @@ public class MypageController {
         Long userCafeId = (Long) session.getAttribute("userCafeId");
         Long cafeId = (Long) session.getAttribute("cafeId");
 
+        // 로그인 체크
         if (userCafeId == null) {
             return "redirect:/login?cafeId=" + cafeId; // 로그인 안됨
         }
@@ -59,7 +61,7 @@ public class MypageController {
         
         StampDTO stamp = stampService.findStampByUserCafeId(userCafe.getUserCafeId());
 
-        // ✅ 추가: 스탬프/쿠폰 계산
+        // 스탬프/쿠폰 계산
         if(stamp != null && stamp.getStampCount() != null) {
         	int totalStamp = stamp.getStampCount();
         	int stampCount  = totalStamp % 10;   // 현재 찍혀있는 스탬프(0~9)
@@ -90,6 +92,7 @@ public class MypageController {
         return "mypage/edit";
     }
 
+    // 닉네임 수정 처리
     @PostMapping("/mypage/updateNickname")
     public String updateNickname(HttpSession session, @RequestParam("nickname") String nickname) {
         Long userCafeId = (Long) session.getAttribute("userCafeId");

@@ -22,6 +22,7 @@ import com.cafein.user.UserService;
 import com.cafein.usercafe.UserCafeDTO;
 import com.cafein.usercafe.UserCafeService;
 
+// 카카오 로그인 컨트롤러 (담당 : 나규태)
 @Controller
 @RequestMapping("/kakao")
 public class KakaoLoginController {
@@ -46,6 +47,7 @@ public class KakaoLoginController {
 		return "redirect:" + redirectUrl;
 	}
 	
+	// 카카오 로그인 콜백
 	@GetMapping("/callback")
 	public String kakaoCallback(@RequestParam("code") String code, @RequestParam("state") Long cafeId, HttpSession session) {
 		System.out.println("인증코드 받음: " + code + "/ 카페 ID : " + cafeId);

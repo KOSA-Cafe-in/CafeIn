@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 스탬프 MyBatis 매퍼 XML (담당 : 나규태, 손윤찬) -->
 <mapper namespace="com.cafein.stamp.mapper.StampMapper">
 	<!-- userCafeId로 조회 (Long userCafeId) -->
 	<select id="findStampByUserCafeId" resultType="com.cafein.stamp.StampDTO" parameterType="long">

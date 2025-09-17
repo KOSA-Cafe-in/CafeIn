@@ -9,6 +9,7 @@ import com.cafein.user.mapper.UserMapper;
 import com.cafein.usercafe.UserCafeDTO;
 import com.cafein.usercafe.UserCafeService;
 
+// 사용자 비즈니스 로직 구현 클래스 (담당 : 나규태)
 @Service
 public class UserServiceImpl implements UserService{
 	@Autowired
@@ -20,26 +21,31 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserCafeService userCafeService;
 	
+	// userId로 단일 사용자 조회
 	@Override
 	public UserDTO findUserById(Long userId) {
 		return userMapper.findUserById(userId);
 	}
 	
+	// 소셜 로그인 정보로 단일 사용자 조회
 	@Override
     public UserDTO findUserBySocial(String socialProvider, String socialId) {
     	return userMapper.findUserBySocial(socialProvider, socialId);
     }
-	
+
+	// 사용자 생성
 	@Override
 	public void createUser(String socialProvider, String socialId, String nickname, String email) {
 		userMapper.createUser(socialProvider, socialId, nickname, email);
 	}
 	
+	// 닉네임 수정
 	@Override
 	public void updateUserNickname(Long userId, String nickname) {
 		userMapper.updateUserNickname(userId, nickname);
 	}
     
+	// 로그인 처리 (사용자 생성 및 UserCafe 관계 설정)
 	@Override
 	public UserDTO processLogin(String socialProvider, String socialId, String nickname, String email, Long cafeId) {
 		// 카페 존재 확인

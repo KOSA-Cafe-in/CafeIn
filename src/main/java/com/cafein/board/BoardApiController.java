@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+// 게시판 API 컨트롤러 (담당 : 나규태)
 @RestController
 @RequestMapping("/api/board")
 public class BoardApiController {
@@ -98,7 +99,7 @@ public class BoardApiController {
         return ResponseEntity.ok(response);
     }
     
-    // 게시글 작성 (POST /api/board)
+    // 게시글 작성 (POST /api/board) (FormData: title, content, image(optional))
     @PostMapping
     public ResponseEntity<Map<String, Object>> createBoard(
     		@RequestParam("title") String title,
@@ -112,19 +113,21 @@ public class BoardApiController {
     		Long userId = (Long) session.getAttribute("userId");
     		Long cafeId = (Long) session.getAttribute("cafeId");
     		
+            // 로그인 체크
     		if(userId == null || cafeId == null) {
     			response.put("success", false);
                 response.put("message", "로그인이 필요합니다.");
                 return ResponseEntity.status(401).body(response);
     		}
     		
-    		// BoardDTO 객체 생성 및 설정
+    		// 게시글 객체 생성
     		BoardDTO board = new BoardDTO();
     		board.setTitle(title);
     		board.setContent(content);
     		board.setUserId(userId);
     		board.setCafeId(cafeId);
     		
+            // 게시글 작성
     		boardService.createBoard(board,imageFile);
     		
     		response.put("success", true);
@@ -138,7 +141,7 @@ public class BoardApiController {
     	return ResponseEntity.ok(response);
     }
     
-    // 게시글 수정 (PATCH /api/board/1)
+    // 게시글 수정 (PATCH /api/board/1) (FormData: title, content, image(optional))
     @PatchMapping("/{boardId}")
     public ResponseEntity<Map<String, Object>> updateBoard(
             @PathVariable Long boardId,     		
@@ -149,7 +152,7 @@ public class BoardApiController {
     	Map<String,Object> response = new HashMap<>();
     	
     	try {
-    		// 권한 체크 : 작성자 본인만 수정 가능
+    		// 로그인 체크
     		Long userId = (Long) session.getAttribute("userId");
     		
     		if(userId == null) {
@@ -167,19 +170,20 @@ public class BoardApiController {
                 return ResponseEntity.status(404).body(response);
             }
             
-            // 작성자 권한 체크
+            // 작성자 권한 체크 (본인만 수정 가능)
             if (!existingBoard.getUserId().equals(userId)) {
                 response.put("success", false);
                 response.put("message", "수정 권한이 없습니다.");
                 return ResponseEntity.status(403).body(response);
             }
             
-            // 수정할 BoardDTO 객체 생성
+            // 수정 데이터 설정
             BoardDTO board = new BoardDTO();
             board.setBoardId(boardId);
             board.setTitle(title);
             board.setContent(content);
 
+            // 게시글 수정
             boardService.updateBoard(board, imageFile);
 
     		response.put("success", true);
@@ -199,10 +203,11 @@ public class BoardApiController {
     	Map<String,Object> response = new HashMap<>();
     	
     	try {
-    		// 권한 체크 : 작성자 본민만 삭제 가능
+    		// 세션에서 사용자 정보 가져오기
     		Long userId = (Long) session.getAttribute("userId");
     		String role = (String) session.getAttribute("role");
     		
+            // 로그인 체크
     		if(userId == null) {
     			response.put("success", false);
                 response.put("message", "로그인이 필요합니다.");
@@ -218,13 +223,14 @@ public class BoardApiController {
                 return ResponseEntity.status(404).body(response);
             }
             
-            // 권한 체크 : 작성자 본인이거나 관리자
+            // 권한 체크: 작성자 본인이거나 관리자만 삭제 가능
             if (!existingBoard.getUserId().equals(userId) && !role.equals("MANAGER")) {
                 response.put("success", false);
                 response.put("message", "삭제 권한이 없습니다.");
                 return ResponseEntity.status(403).body(response);
             }
             
+             // 게시글 삭제 (S3에 저장된 이미지도 함께 삭제)
             boardService.deleteBoard(boardId);
             
     		response.put("success", true);

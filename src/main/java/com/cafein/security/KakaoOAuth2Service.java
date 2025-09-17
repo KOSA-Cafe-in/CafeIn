@@ -13,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+// 카카오 OAuth2 서비스 (담당 : 나규태)
 @Service
 @PropertySource("classpath:application.properties")
 public class KakaoOAuth2Service {
@@ -34,6 +35,7 @@ public class KakaoOAuth2Service {
 	@Value("${kakao.user.url}")
     private String userUrl;    
     
+    // 카카오 인증 URL 생성
     public String getAuthorizationRedirectUrl(Long cafeId) {
     	String url = authUrl + "?client_id=" + clientId
                 + "&redirect_uri=" + redirectUri
@@ -44,6 +46,7 @@ public class KakaoOAuth2Service {
         return url;
     }
     
+    // 카카오 액세스 토큰 발급
     public Map<String, Object> getAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -57,6 +60,7 @@ public class KakaoOAuth2Service {
         return response.getBody();
     }
 
+    // 카카오 사용자 정보 조회
     public Map<String, Object> getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

@@ -6,21 +6,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cafein.cafe.mapper.CafeMapper;
 
+// 카페 비즈니스 로직 구현 클래스 (담당 : 나규태, 손윤찬)
 @Service
 public class CafeServiceImpl implements CafeService{
 	@Autowired
 	private CafeMapper cafeMapper;
 	
+    // cafeId로 단일 카페 조회
 	@Override
     public CafeDTO findCafeById(Long cafeId) {
     	return cafeMapper.findCafeById(cafeId);
     }
-    
+
+    // cafeId로 소개글 조회
     @Override
     public String findIntro(Long cafeId) {
         return cafeMapper.findIntro(cafeId);
     }
 
+    // cafeId로 소개글 수정
     @Transactional
     @Override
     public void updateIntro(Long cafeId, String content) {
